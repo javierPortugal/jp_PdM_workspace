@@ -6,12 +6,33 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2025 STMicroelectronics.
-  * All rights reserved.
+  *this file was modified by Javier Portugal who is enrolled in the
+  *micro-controller programming course imparted by UBA in the CESE specialization
+  * The Point 1 purpose of the Practica is:
   *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *Implementar un programa que haga parpadear el led de la placa NUCLEO-F446RE LD2.
+  *
+  *El led debe permanecer encendido 200 ms con duty cycle 50%.
+  *
+  * ****************************************************************************
+  * ****************************************************************************
+  * The Point 2 purpose of the Practica is:
+  *
+  * Utilizar el pulsador (B1) para controlar el tiempo de encendido.
+  * Cada vez que se presiona el pulsador el tiempo de encendido debe alternar entre 200 ms y 500 ms
+  *
+  * ******************************************************************************
+  * ******************************************************************************
+  *
+  *
+  * Algunas preguntas para pensar el ejercicio:
+  *
+  *¿De qué serviría usar un array de “tiempos” en el programa? ¿Qué pasa con nuestro programa si nos piden agregar/sacar/cambiar un tiempo de encendido?
+  *¿Cómo responde el programa a las pulsaciones, hay falsos positivos o pulsaciones no detectadas?
+  *¿Cuál es el mejor momento para leer el pulsador, luego de un ciclo completo de la secuencia o después de encender y apagar el led? ¿Qué diferencia hay entre estas alternativas?
+  *¿Cambiaría las respuestas a las preguntas anteriores si el tiempo de encendido del led fuera sensiblemente más grande, 2 segundos por ejemplo? ¿Y si fuera sensiblemente más chico, 50 ms por ejemplo?
+  *
+  *
   *
   ******************************************************************************
   */
