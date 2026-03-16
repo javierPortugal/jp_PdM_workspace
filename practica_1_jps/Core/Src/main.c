@@ -93,7 +93,7 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  int tiempo=200;
+  uint32_t tiempo=200;
 
   while (1)
   {
