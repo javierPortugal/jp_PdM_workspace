@@ -130,7 +130,7 @@ int main(void)
 
  // tick_t vectorDemoras[] = {1000, 200, 100};
 
-  int j,k=0;
+ // int j,k=0;
 
   while (1)
   {
