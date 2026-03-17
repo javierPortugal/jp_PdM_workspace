@@ -128,12 +128,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   delayInit(&myDelay, 100);
 
-  tick_t vectorDemoras[] = {1000, 200, 100};
+ // tick_t vectorDemoras[] = {1000, 200, 100};
 
   int j,k=0;
+
   while (1)
   {
-    /* USER CODE END WHILE */
+
 	  if(delayRead(&myDelay)){
 		  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 	  }
