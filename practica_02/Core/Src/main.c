@@ -126,34 +126,88 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  delayInit(&myDelay, 100);
+  delayInit(&myDelay, 1000);
 
- // tick_t vectorDemoras[] = {1000, 200, 100};
+ //tick_t vectorDemoras[] = {1000, 500, 100};
 
- // int j,k=0;
+ //int j =0;
+ int k = 0;
 
   while (1)
   {
 
-	  if(delayRead(&myDelay)){
-		  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+//*********************************************************************************
+//para verificar el punto 2, quitar el comentario de las lineas 141, 142, 143 y comentar lineas 167 a 168 del punto 3
+
+
+	 // if(delayRead(&myDelay)){
+	 //	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	 // }
+
+// mantener este codigo como comentario para verificar elñ punto 3 y 2
+/*
+	  for(j = 0;j < 5;j++)
+	  {
+		  delayWrite(&myDelay,vectorDemoras[j]);
+
+		  for(k = 0;k < 5;){
+
+			 if(delayRead(&myDelay)){
+				  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+				  k++;
+			 }
+		  }
 	  }
 
-//	  for(j=0;j<3;j++)
-//	  {
-//		  delayWrite(&myDelay,vectorDemoras[j]);
-//		  for(k=0;k<5;k++){
-//			 if(delayRead(&myDelay)){
-//				  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-//			 }
-//
-//		  }
-//	  }
-    /* USER CODE BEGIN 3 */
+	  delayInit(&myDelay, 50);
+
+	  */
+
+//*******************************************************************************************************************************************
+//Codigo para punto 3 (comentar lineas 141, 142, 143
+
+	  while(k <= 9){
+	  if(delayRead(&myDelay)){
+	 				  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	 				  k++;
+	 			 }
+	  }
+
+	  delayInit(&myDelay, 200);
+	  k = 0;
+
+	  while(k <= 9){
+	  	  if(delayRead(&myDelay)){
+	  	 				  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	  	 				  k++;
+	  	 			 }
+	  	  }
+
+	  delayInit(&myDelay, 100);
+	  	  k = 0;
+
+	  	  while(k <= 9){
+	  	  	  if(delayRead(&myDelay)){
+	  	  	 				  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	  	  	 				  k++;
+	  	  	 			 }
+	  	  	  }
+
+	  	delayInit(&myDelay, 1000);
+	  		  	  k = 0;
+
 
   }
-  /* USER CODE END 3 */
+
+
+//***********************************************************************************************************************
+//Bracket inferior es el cierre de la funcion Main
 }
+
+/* USER CODE BEGIN 3 */
+
+
+ /* USER CODE END 3 */
 
 /**
   * @brief System Clock Configuration
