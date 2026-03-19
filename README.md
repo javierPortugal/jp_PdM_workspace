@@ -1,6 +1,6 @@
 # Carreras de Especialización Sistemas Embebidos --> UBA
 ## CESE - Programación de Microcontroladores – Alumno: Javier Portugal
-Bimestre Marzo-Abril 2026
+## Bimestre Marzo-Abril 2026
 
 Este repositorio contiene los proyectos hechos durante el desarrollo de la materia Programación de Microcontroladores (PdM) para la CESE - FIUBA. 
 
