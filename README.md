@@ -4,10 +4,10 @@ Este repositorio contiene los proyectos hechos durante el desarrollo de la mater
 
 La siguiente lista muestra los proyectos hechos hasta ahora:
 
-<style>input[type='checkbox'][readonly]{pointer-events: none;}</style>
 
-- [ ] Practica 1
-- [ ] Practica 2
+
+- [x] Practica 1
+- [x] Practica 2
 - [ ] Practica 3
 - [ ] Practica 4
 - [ ] Practica 5
