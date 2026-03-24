@@ -41,6 +41,7 @@
 #define SEGUNDO		2
 #define TERCERO		3
 #define CINCOSEG	5000
+#define CICLO		10
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -104,8 +105,8 @@ int main(void)
 
   delay_t myDelay;
 
-  myDelay.startTime = 0;
-  myDelay.duration = 0;
+  myDelay.startTime = INICIO;
+  myDelay.duration = INICIO;
   myDelay.running = false;
 
   /* USER CODE END 2 */

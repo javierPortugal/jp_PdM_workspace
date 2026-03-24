@@ -2,7 +2,7 @@
  * API_delay.c
  *
  *  Created on: 19 mar 2026
- *      Author: javie
+ *      Author: Javier Portugal
  */
 
 
