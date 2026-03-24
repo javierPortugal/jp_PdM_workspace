@@ -41,6 +41,7 @@
 #define SEGUNDO		2
 #define TERCERO		3
 #define CINCOSEG	5000
+#define CICLO		10
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -103,8 +104,8 @@ int main(void)
 
   delay_t myDelay;
 
-  myDelay.startTime = 0;
-  myDelay.duration = 0;
+  myDelay.startTime = INICIO;
+  myDelay.duration = INICIO;
   myDelay.running = false;
 
   /* USER CODE END 2 */
@@ -118,22 +119,24 @@ int main(void)
   delayInit(&myDelay, TIEMPOS[INICIO]);
 
 //*****************************************************************************************************************
-//*************     PUNTO 2 de la Practica 		*******************************************************************
+//*************     PUNTO 3 de la Practica 		*******************************************************************
 
 
 //Aqui asigno un estado inicial al LD2 y se mantiene iluminado un tiempo de 5 segundos para marcar el inicio de la rutina
-//y verificar que el punto 2 de la practica funciona, despues de los 5 segundos el LED2
+//y verificar que el punto 3 de la practica funciona, despues de los 5 segundos el LED2 con tinua con la secuencia y el
+//requerimiento del punto 3
+
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
   HAL_Delay(CINCOSEG);
   myEstado_t = estado_A;
-  entero32 K =0;
+  entero32 K =INICIO;
 
 
   while(1){
 /*
  * Implemento una secuencia para que el LED2 tome cada valor del vector TIEMPOS[] y se ejecute 5 veces
- *
- *
+ *posteriormente se verifica que se cumplieron los ciclos de iluminacion y que el delay no este corriendo
+ *para poder escribir el nuevo valor de retardo
  * */
 	  switch (myEstado_t){
 
@@ -143,9 +146,10 @@ int main(void)
 	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 	  	 	  K++;
 		  }
-		  if (K == 10){
+		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
+
 			  delayWrite(&myDelay, TIEMPOS[PRIMERO]);
-			  K = 0;
+			  K = INICIO;
 			  myEstado_t = estado_B;
 		  }
 		  break;
@@ -156,9 +160,9 @@ int main(void)
 	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 	  	  	 	  K++;
 	  		  }
-	  		  if (K == 10){
+	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
 	  			  delayWrite(&myDelay, TIEMPOS[SEGUNDO]);
-	  			  K = 0;
+	  			  K = INICIO;
 	  			  myEstado_t = estado_C;
 	  		  }
 	  		  break;
@@ -169,9 +173,9 @@ int main(void)
 	  	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 	  	  	  	 	  K++;
 	  	  		  }
-	  	  		  if (K == 10){
+	  	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
 	  	  			  delayWrite(&myDelay, TIEMPOS[TERCERO]);
-	  	  			  K = 0;
+	  	  			  K = INICIO;
 	  	  			  myEstado_t = estado_D;
 	  	  		  }
 	  	  		  break;
@@ -182,9 +186,9 @@ int main(void)
 	  	  	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 	  	  	  	  	 	  K++;
 	  	  	  		  }
-	  	  	  		  if (K == 10){
+	  	  	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
 	  	  	  			  delayWrite(&myDelay, TIEMPOS[INICIO]);
-	  	  	  			  K = 0;
+	  	  	  			  K = INICIO;
 	  	  	  			  myEstado_t = estado_A;
 	  	  	  		  }
 	  	  	  		  break;

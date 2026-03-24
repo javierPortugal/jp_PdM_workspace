@@ -2,7 +2,7 @@
  * API_delay.h
  *
  *  Created on: 19 mar 2026
- *      Author: javie
+ *      Author: Javier Portugal
  */
 
 #ifndef API_INC_API_DELAY_H_
@@ -16,6 +16,10 @@ typedef uint32_t tick_t; // Qué biblioteca se debe incluir para que esto compil
 typedef bool bool_t;  // Qué biblioteca se debe incluir para que esto compile? stdbool.h
 typedef uint32_t entero32;
 
+typedef enum
+{estado_A, estado_B, estado_C, estado_D
+}estado_t;
+
 typedef struct{
    tick_t startTime;
    tick_t duration;
@@ -28,10 +32,7 @@ void delayWrite( delay_t * delay, tick_t duration );
 
 bool_t delayIsRunning( delay_t* delay );
 
-typedef enum
-{estado_A, estado_B, estado_C, estado_D
 
-}estado_t;
 
 
 
