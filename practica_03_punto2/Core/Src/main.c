@@ -18,6 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "API_delay.h"
+//#include <string.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -31,9 +33,14 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define MEDIOSEG	 500
-#define CUARTOSEG    250
-#define OCTAVOSEG	 125
+#define MEDIOSEG		500
+#define CIENMILISEG		100
+#define UNSEG			1000
+#define INICIO		0
+#define PRIMERO		1
+#define SEGUNDO		2
+#define TERCERO		3
+#define CINCOSEG	5000
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -43,8 +50,6 @@
 
 /* Private variables ---------------------------------------------------------*/
 UART_HandleTypeDef huart2;
-//uint32_t	unSeg = 1000;
-//uint32_t	unSeg = 1000;
 
 /* USER CODE BEGIN PV */
 
@@ -54,41 +59,17 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+
+
+//#define BLINK_TIMES 1
+//#define TOGGLE_TIMES (2*BLINK_TIMES)
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
 
-void delayInit( delay_t * delay, tick_t duration ){
-	delay->duration = duration;
-	delay->running = false;
-}
-
-bool_t delayRead( delay_t * delay ){
-	if(!delay->running) {
-		delay->running = true;
-		delay->startTime = HAL_GetTick();
-	} else {
-		tick_t tiempoActual = HAL_GetTick();
-		tick_t diferencia = tiempoActual - delay->startTime;
-
-		if(diferencia >= delay->duration){
-			delay->running = false;
-			return true;
-		}
-		return false;
-	}
-	return false;
-}
-
-void delayWrite( delay_t * delay, tick_t duration){
-	delay->duration = duration;
-}
-
-
-/* USER CODE END 0 */
 
 /**
   * @brief  The application entry point.
@@ -131,82 +112,28 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  delayInit(&myDelay, MEDIOSEG);
-
- //tick_t vectorDemoras[] = {1000, 500, 100};
-
- //int j =0;
- int k = 0;
-
-  while (1)
-  {
-
-//*********************************************************************************
-//para verificar el punto 2, quitar el comentario de las lineas 141, 142, 143 y comentar lineas 167 a 168 del punto 3
 
 
-	 // if(delayRead(&myDelay)){
-	 //	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	 // }
+  const tick_t TIEMPOS[] = {MEDIOSEG,CIENMILISEG,CIENMILISEG,UNSEG};
+  delayInit(&myDelay, TIEMPOS[INICIO]);
 
-// mantener este codigo como comentario para verificar elñ punto 3 y 2
-/*
-	  for(j = 0;j < 5;j++)
-	  {
-		  delayWrite(&myDelay,vectorDemoras[j]);
+//*****************************************************************************************************************
+//*************     PUNTO 1 de la Practica 		*******************************************************************
 
-		  for(k = 0;k < 5;){
 
-			 if(delayRead(&myDelay)){
-				  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-				  k++;
-			 }
-		  }
-	  }
+//Aqui asigno un estado inicial al LD2 y se mantiene iluminado un tiempo de 5 segundos para marcar el inicio de la rutina
+//y verificar que el punto 1 de la practica funciona, despues de los 5 segundos el LED2 parpadeo a 100 milisegundos
 
-	  delayInit(&myDelay, 50);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
+  HAL_Delay(CINCOSEG);
 
-	  */
-
-//*******************************************************************************************************************************************
-//Codigo para punto 3 (comentar lineas 141, 142, 143
-
-	  while(k <= 9){
+  while(1){
 	  if(delayRead(&myDelay)){
-	 				  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	 				  k++;
-	 			 }
+	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
 	  }
-
-	  delayInit(&myDelay, MEDIOSEG);
-	  k = 0;
-
-	  while(k <= 9){
-	  	  if(delayRead(&myDelay)){
-	  	 				  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  	 				  k++;
-	  	 			 }
-	  	  }
-
-	  delayInit(&myDelay, CUARTOSEG);
-	  	  k = 0;
-
-	  	  while(k <= 9){
-	  	  	  if(delayRead(&myDelay)){
-	  	  	 				  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  	  	 				  k++;
-	  	  	 			 }
-	  	  	  }
-
-	  	delayInit(&myDelay, OCTAVOSEG);
-	  		  	  k = 0;
-
-
   }
 
 
-//***********************************************************************************************************************
-//Bracket inferior es el cierre de la funcion Main
 }
 
 /* USER CODE BEGIN 3 */
