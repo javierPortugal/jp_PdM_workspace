@@ -4,13 +4,15 @@
 
 Este repositorio contiene los proyectos hechos durante el desarrollo de la materia Programación de Microcontroladores (PdM) para la CESE - FIUBA. 
 
+Readme files para cada práctica se encuentra en las carpetas de las mismas.
+
 La siguiente lista muestra los proyectos hechos hasta ahora:
 
 
 
 - [x] Practica 1
 - [x] Practica 2
-- [ ] Practica 3
+- [x] Practica 3
 - [ ] Practica 4
 - [ ] Practica 5
 - [ ] Practica 6
