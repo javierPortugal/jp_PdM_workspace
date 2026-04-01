@@ -1,16 +1,24 @@
-# Practica 4
+# Práctica 4
 
-Este ejercicio implementa una MEF (Maquina de Estados Finita) anti-rebote que
+Una máquina de estado finito (FSM, por sus siglas en inglés) es un modelo computacional que describe 
+el comportamiento de un sistema utilizando un número limitado de estados y transiciones entre ellos. 
+Solo puede estar en un estado a la vez y cambia a otro en respuesta a eventos o entradas externas. 
+
+Las máquinas de estado finito que pueden ser de dos tipos:
+
+1.- Máquina de Mealy: La salida depende del estado actual y de la entrada.
+2.- Máquina de Moore: La salida depende únicamente del estado actual.
+
+El ejercicio en esta práctica implementa una MEF (Maquina de Estados Finita) anti-rebote que
 permita leer el estado de un pulsador de la placa NUCLEO-F446RE y generar
-acciones o eventos ante un flanco descendente o ascendente.
-
-Esta práctica permite trabajar con máquinas de estado finito.
+acciones o eventos ante un flanco descendente o ascendente esta aplicación pretende eliminar
+el efecto de rebote que se produce cuando se activa un pulsador mecánico.
 
 El tiempo anti-rebote es de 40mS con un retardo no bloqueante utilizando la
 libreria `Drivers/API/API_delay.(c|h)`.
 
-La misma se encuentra definida bajo los archivos `Drivers/API/API_debounce.(c
-|h)` e implementa las siguientes funciones y tipos de datos:
+El driver de la práctica se encuentra definido en los archivos `Drivers/API/API_debounce.(c
+|h)` e implementa los requerimientos descritos en la práctica como se indica a continuación:
 
 
 ```
@@ -54,14 +62,4 @@ bool_t readKey();
 ```
 
 
-## Ejemplo
 
-Dentro de `main.c` se muestra un ejemplo de como implementar la FEM. Este
-ejemplo, hace parpadear un LED con un duty cycle del 50% y cada vez que se
-presiona el boton, la frecuencia de parpadeo se modifica entre 100mS y 500mS.
-
-
-## Compilacion
-
-Usando STM32CubeIDE, importar este proyecto y hacer click en el martillo para
-compilar y despues en el boton de "play" para correr sobre la placa.
