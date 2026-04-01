@@ -16,10 +16,9 @@ acciones o eventos ante un flanco descendente o ascendente esta aplicación pret
 el efecto de rebote que se produce cuando se activa un pulsador mecánico.
 
 El tiempo anti-rebote es de 40mS con un retardo no bloqueante utilizando la
-libreria `Drivers/API/API_delay.(c|h)`.
+libreria `Drivers/API/API_delay.c` y `Drivers/API/API_delay.h`.
 
-El driver de la práctica se encuentra definido en los archivos `Drivers/API/API_debounce.(c
-|h)` e implementa los requerimientos descritos en la práctica como se indica a continuación:
+El driver de la práctica se encuentra definido en los archivos `Drivers/API/API_debounce.c` y `Drivers/API/API_debounce.h` e implementa los requerimientos descritos en la práctica como se indica a continuación:
 
 
 ```
