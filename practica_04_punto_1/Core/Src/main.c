@@ -18,6 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "API_delay.h"
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -31,6 +33,15 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define MEDIOSEG		500
+#define CIENMILISEG		100
+#define UNSEG			1000
+#define INICIO		0
+#define PRIMERO		1
+#define SEGUNDO		2
+#define TERCERO		3
+#define CINCOSEG	5000
+#define CICLO		10
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -49,14 +60,16 @@ UART_HandleTypeDef huart2;
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART2_UART_Init(void);
+
+
+
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
 
-/* USER CODE END 0 */
 
 /**
   * @brief  The application entry point.
@@ -89,31 +102,115 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  delay_t myDelay;
+
+  myDelay.startTime = INICIO;
+  myDelay.duration = INICIO;
+  myDelay.running = false;
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  uint32_t tiempo=500;
+  typedef enum
+  {   estado_A,
+	  estado_B,
+	  estado_C,
+	  estado_D,
+  }estado_t;
 
-  while (1)
-  {
-    /* USER CODE END WHILE */
+  estado_t myEstado_t;
 
-    /* USER CODE BEGIN 3 */
+  const tick_t TIEMPOS[] = {MEDIOSEG,CIENMILISEG,CIENMILISEG,UNSEG};
+  delayInit(&myDelay, TIEMPOS[INICIO]);
 
-	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+//*****************************************************************************************************************
+//*************     PUNTO 3 de la Practica 		*******************************************************************
 
-	  HAL_Delay(tiempo);
 
-	  if (!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
+//Aqui asigno un estado inicial al LD2 y se mantiene iluminado un tiempo de 5 segundos para marcar el inicio de la rutina
+//y verificar que el punto 3 de la practica funciona, despues de los 5 segundos el LED2 con tinua con la secuencia y el
+//requerimiento del punto 3
 
-		  tiempo = 100;
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
+  HAL_Delay(CINCOSEG);
+  myEstado_t = estado_A;
+  entero32 K =INICIO;
+
+
+  while(1){
+/*
+ * Implemento una secuencia para que el LED2 tome cada valor del vector TIEMPOS[] y se ejecute 5 veces
+ *posteriormente se verifica que se cumplieron los ciclos de iluminacion y que el delay no este corriendo
+ *para poder escribir el nuevo valor de retardo
+ * */
+	  switch (myEstado_t){
+
+	  case estado_A:
+
+		  if(delayRead(&myDelay)){
+	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	  	 	  K++;
+		  }
+		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
+
+			  delayWrite(&myDelay, TIEMPOS[PRIMERO]);
+			  K = INICIO;
+			  myEstado_t = estado_B;
+		  }
+		  break;
+
+	  case estado_B:
+
+	  		  if(delayRead(&myDelay)){
+	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	  	  	 	  K++;
+	  		  }
+	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
+	  			  delayWrite(&myDelay, TIEMPOS[SEGUNDO]);
+	  			  K = INICIO;
+	  			  myEstado_t = estado_C;
+	  		  }
+	  		  break;
+
+	  case estado_C:
+
+	  	  		  if(delayRead(&myDelay)){
+	  	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	  	  	  	 	  K++;
+	  	  		  }
+	  	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
+	  	  			  delayWrite(&myDelay, TIEMPOS[TERCERO]);
+	  	  			  K = INICIO;
+	  	  			  myEstado_t = estado_D;
+	  	  		  }
+	  	  		  break;
+
+	  case estado_D:
+
+	  	  	  		  if(delayRead(&myDelay)){
+	  	  	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	  	  	  	  	 	  K++;
+	  	  	  		  }
+	  	  	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
+	  	  	  			  delayWrite(&myDelay, TIEMPOS[INICIO]);
+	  	  	  			  K = INICIO;
+	  	  	  			  myEstado_t = estado_A;
+	  	  	  		  }
+	  	  	  		  break;
+//Fin del case
 	  }
 
-
+// Fin del ciclo while
   }
-  /* USER CODE END 3 */
+
+
 }
+
+/* USER CODE BEGIN 3 */
+
+
+ /* USER CODE END 3 */
 
 /**
   * @brief System Clock Configuration
