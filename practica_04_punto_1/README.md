@@ -7,6 +7,7 @@ Solo puede estar en un estado a la vez y cambia a otro en respuesta a eventos o 
 Las máquinas de estado finito que pueden ser de dos tipos:
 
 1.- Máquina de Mealy: La salida depende del estado actual y de la entrada.
+
 2.- Máquina de Moore: La salida depende únicamente del estado actual.
 
 El ejercicio en esta práctica implementa una MEF (Maquina de Estados Finita) anti-rebote que
