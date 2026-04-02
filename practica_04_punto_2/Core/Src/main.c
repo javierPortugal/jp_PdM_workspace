@@ -35,17 +35,13 @@
 /* USER CODE BEGIN PD */
 #define MEDIOSEG		500
 #define CIENMILISEG		100
-#define CUARENTAMILISEG	40
 #define UNSEG			1000
-#define INICIO			0
-#define PRIMERO			1
-#define SEGUNDO			2
-#define TERCERO			3
-#define CINCOSEG		5000
-#define TRESSEG			3000
-#define CICLO			10
-#define DEBOUNCETIME	4
-
+#define INICIO		0
+#define PRIMERO		1
+#define SEGUNDO		2
+#define TERCERO		3
+#define CINCOSEG	5000
+#define CICLO		10
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -69,28 +65,6 @@ static void MX_USART2_UART_Init(void);
 
 
 /* USER CODE BEGIN PFP */
-void debounceFSM_init();		// debe cargar el estado inicial
-void debounceFSM_update();		// debe leer las entradas, resolver la lógica de transición de estados y actualizar las salidas
-void buttonPressed();			// debe encender el LED
-void buttonReleased();			// debe apagar el LED
-
-typedef enum{
- BUTTON_UP,
- BUTTON_FALLING,
- BUTTON_DOWN,
- BUTTON_RAISING,
- } debounceState_t;
-
- debounceState_t myEstado_t;
- entero32 K =INICIO;
- const tick_t TIEMPOS[] = {MEDIOSEG,CIENMILISEG,CIENMILISEG,UNSEG,CUARENTAMILISEG};
-
-delay_t myDelay;
-
-
-
-
-
 
 /* USER CODE END PFP */
 
@@ -128,67 +102,104 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  delay_t myDelay;
 
+  myDelay.startTime = INICIO;
+  myDelay.duration = INICIO;
+  myDelay.running = false;
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
+  typedef enum
+  {   estado_A,
+	  estado_B,
+	  estado_C,
+	  estado_D,
+  }estado_t;
 
+  estado_t myEstado_t;
 
-  myDelay.startTime=INICIO;
-  myDelay.duration=CIENMILISEG;
-  myDelay.running=false;
-
-
-  delayInit(&myDelay, TIEMPOS[DEBOUNCETIME]);
+  const tick_t TIEMPOS[] = {MEDIOSEG,CIENMILISEG,CIENMILISEG,UNSEG};
+  delayInit(&myDelay, TIEMPOS[INICIO]);
 
 //*****************************************************************************************************************
-//*************     PUNTO 1 de la Practica 4		*******************************************************************
+//*************     PUNTO 3 de la Practica 		*******************************************************************
 
 
-
+//Aqui asigno un estado inicial al LD2 y se mantiene iluminado un tiempo de 5 segundos para marcar el inicio de la rutina
+//y verificar que el punto 3 de la practica funciona, despues de los 5 segundos el LED2 con tinua con la secuencia y el
+//requerimiento del punto 3
 
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
-  HAL_Delay(TRESSEG);
-
-
-  //INICIALIZAMOS EL ESTADO
-
-  //debounceFSM_init();
-
-  //CREAMOS UNA SECUENCIA DE PULSACIONES RAPIDAS PARA INDICAR QUE SE INICIALIZO
-
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
-  HAL_Delay(CIENMILISEG);
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
-  HAL_Delay(CIENMILISEG);
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
-  HAL_Delay(CIENMILISEG);
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
-  HAL_Delay(CIENMILISEG);
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
-  HAL_Delay(CIENMILISEG);
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
-  HAL_Delay(CIENMILISEG);
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
-  HAL_Delay(CIENMILISEG);
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
-  HAL_Delay(CIENMILISEG);
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
-  HAL_Delay(CIENMILISEG);
-  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
-  HAL_Delay(CIENMILISEG);
-
-  debounceFSM_init();
-
-
+  HAL_Delay(CINCOSEG);
+  myEstado_t = estado_A;
+  entero32 K =INICIO;
 
 
   while(1){
+/*
+ * Implemento una secuencia para que el LED2 tome cada valor del vector TIEMPOS[] y se ejecute 5 veces
+ *posteriormente se verifica que se cumplieron los ciclos de iluminacion y que el delay no este corriendo
+ *para poder escribir el nuevo valor de retardo
+ * */
+	  switch (myEstado_t){
 
+	  case estado_A:
 
-	  debounceFSM_update();
+		  if(delayRead(&myDelay)){
+	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	  	 	  K++;
+		  }
+		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
 
+			  delayWrite(&myDelay, TIEMPOS[PRIMERO]);
+			  K = INICIO;
+			  myEstado_t = estado_B;
+		  }
+		  break;
+
+	  case estado_B:
+
+	  		  if(delayRead(&myDelay)){
+	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	  	  	 	  K++;
+	  		  }
+	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
+	  			  delayWrite(&myDelay, TIEMPOS[SEGUNDO]);
+	  			  K = INICIO;
+	  			  myEstado_t = estado_C;
+	  		  }
+	  		  break;
+
+	  case estado_C:
+
+	  	  		  if(delayRead(&myDelay)){
+	  	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	  	  	  	 	  K++;
+	  	  		  }
+	  	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
+	  	  			  delayWrite(&myDelay, TIEMPOS[TERCERO]);
+	  	  			  K = INICIO;
+	  	  			  myEstado_t = estado_D;
+	  	  		  }
+	  	  		  break;
+
+	  case estado_D:
+
+	  	  	  		  if(delayRead(&myDelay)){
+	  	  	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
+	  	  	  	  	 	  K++;
+	  	  	  		  }
+	  	  	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
+	  	  	  			  delayWrite(&myDelay, TIEMPOS[INICIO]);
+	  	  	  			  K = INICIO;
+	  	  	  			  myEstado_t = estado_A;
+	  	  	  		  }
+	  	  	  		  break;
+//Fin del case
+	  }
 
 // Fin del ciclo while
   }
@@ -197,101 +208,6 @@ int main(void)
 }
 
 /* USER CODE BEGIN 3 */
-void debounceFSM_init(){
-	// debe cargar el estado inicial y hacer RESET en el LD2
-
-	myEstado_t = BUTTON_UP;
-	buttonReleased();
-
-}
-
-void debounceFSM_update(){
-	//debe leer las entradas, resolver la lógica de
-	// transición de estados y actualizar las salidas
-
-	  switch (myEstado_t){
-
-		  case BUTTON_UP:
-
-			  //asigna el estado Button_up y asigna los estados siguientes dependiendo de la transicion
-			  buttonReleased();
-
-			  if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-
-				  myEstado_t = BUTTON_UP;
-			  }
-			  if (!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-
-				  myEstado_t = BUTTON_FALLING;
-			  }
-
-
-			  break;
-
-		  case BUTTON_FALLING:
-
-			  	  //aplica el tiempo para realizar el debounce y verificar que
-			  	  //efectivamente se presiono el boton azul
-
-		  		  if(delayRead(&myDelay)){
-
-		  			if (!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-
-		  				myEstado_t = BUTTON_DOWN;
-		  			}
-
-		  		  }
-
-		  		  break;
-
-		  case BUTTON_DOWN:
-			  	  //modifica la salida de acuerdo a la liberacion del boton azul y asigno el nuevo estado
-			  	  	  buttonPressed();
-
-			  	  	  if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-
-			  	  		  myEstado_t = BUTTON_RAISING;
-
-			  	  	  }
-
-			  	  	  if (!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-
-			  	  		  myEstado_t = BUTTON_DOWN;
-			  	  				  }
-
-
-		  	  		  break;
-
-		  case BUTTON_RAISING:
-			  //aplica el tiempo para realizar el debounce y verificar que
-			  //efectivamente se libero el boton azul
-
-			  	  	  if(delayRead(&myDelay)){
-
-			  		  	if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-
-			  		  		myEstado_t = BUTTON_UP;
-			  		  	}
-
-			  		  }
-
-
-		  	  	  		  break;
-	//Fin del case
-		  }
-
-}
-
-void buttonPressed(){
-	// debe encender el LED
-	HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
-
-}
-void buttonReleased(){
-	// debe apagar el LED
-	HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
-
-}
 
 
  /* USER CODE END 3 */
