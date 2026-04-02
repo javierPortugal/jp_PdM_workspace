@@ -13,7 +13,7 @@ La siguiente lista muestra los proyectos hechos hasta ahora:
 - [x] Practica 1
 - [x] Practica 2
 - [x] Practica 3
-- [ ] Practica 4
+- [x] Practica 4
 - [ ] Practica 5
 - [ ] Practica 6
 - [ ] Practica 7
