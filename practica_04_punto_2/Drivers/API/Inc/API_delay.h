@@ -24,7 +24,7 @@ typedef struct{
    bool_t running;
 } delay_t;
 
-
+//delay_t myDelay;
 
 void delayInit( delay_t * delay, tick_t duration );
 bool_t delayRead( delay_t * delay );

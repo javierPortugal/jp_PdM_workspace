@@ -18,11 +18,13 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "API_delay.h"
 
+//#include "API_delay.c"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "API_delay.h"
+#include "API_debounce.h"
 
 /* USER CODE END Includes */
 
@@ -33,15 +35,22 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define MEDIOSEG		500
-#define CIENMILISEG		100
+
+
+#define INICIO			0
+#define PRIMERO			1
+#define SEGUNDO			2
+#define TERCERO			3
+#define CINCOSEG		5000
+#define TRESSEG			3000
 #define UNSEG			1000
-#define INICIO		0
-#define PRIMERO		1
-#define SEGUNDO		2
-#define TERCERO		3
-#define CINCOSEG	5000
-#define CICLO		10
+#define MEDIOSEG		500
+#define CICLO			10
+#define DEBOUNCETIME	4
+#define CIENMILISEG		100
+#define STARTTIME		0
+#define CUARENTAMILISEG	40
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -65,6 +74,19 @@ static void MX_USART2_UART_Init(void);
 
 
 /* USER CODE BEGIN PFP */
+
+
+
+ //entero32 K =INICIO;
+
+ const tick_t TIEMPOS[] = {MEDIOSEG,CIENMILISEG,CIENMILISEG,UNSEG,CUARENTAMILISEG};
+
+
+ delay_t myDelay;
+
+
+
+
 
 /* USER CODE END PFP */
 
@@ -102,104 +124,70 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
-  delay_t myDelay;
 
-  myDelay.startTime = INICIO;
-  myDelay.duration = INICIO;
-  myDelay.running = false;
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  typedef enum
-  {   estado_A,
-	  estado_B,
-	  estado_C,
-	  estado_D,
-  }estado_t;
 
-  estado_t myEstado_t;
 
-  const tick_t TIEMPOS[] = {MEDIOSEG,CIENMILISEG,CIENMILISEG,UNSEG};
-  delayInit(&myDelay, TIEMPOS[INICIO]);
+
+
+
+  //delayInit(&myDelay, TIEMPOS[DEBOUNCETIME]);
 
 //*****************************************************************************************************************
-//*************     PUNTO 3 de la Practica 		*******************************************************************
+//*************     PUNTO 1 de la Practica 4		*******************************************************************
 
 
-//Aqui asigno un estado inicial al LD2 y se mantiene iluminado un tiempo de 5 segundos para marcar el inicio de la rutina
-//y verificar que el punto 3 de la practica funciona, despues de los 5 segundos el LED2 con tinua con la secuencia y el
-//requerimiento del punto 3
+
 
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
-  HAL_Delay(CINCOSEG);
-  myEstado_t = estado_A;
-  entero32 K =INICIO;
+  HAL_Delay(TRESSEG);
 
+
+  //INICIALIZAMOS EL ESTADO
+
+  //debounceFSM_init();
+
+  //CREAMOS UNA SECUENCIA DE PULSACIONES RAPIDAS PARA INDICAR QUE SE INICIALIZO
+
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
+  HAL_Delay(CIENMILISEG);
+
+  debounceFSM_init();
+
+
+
+  myDelay.startTime=STARTTIME;
+  myDelay.duration=CUARENTAMILISEG;
+  myDelay.running=false;
+
+  delayInit(&myDelay, TIEMPOS[DEBOUNCETIME]);
 
   while(1){
-/*
- * Implemento una secuencia para que el LED2 tome cada valor del vector TIEMPOS[] y se ejecute 5 veces
- *posteriormente se verifica que se cumplieron los ciclos de iluminacion y que el delay no este corriendo
- *para poder escribir el nuevo valor de retardo
- * */
-	  switch (myEstado_t){
 
-	  case estado_A:
 
-		  if(delayRead(&myDelay)){
-	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  	 	  K++;
-		  }
-		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
+	  debounceFSM_update();
 
-			  delayWrite(&myDelay, TIEMPOS[PRIMERO]);
-			  K = INICIO;
-			  myEstado_t = estado_B;
-		  }
-		  break;
-
-	  case estado_B:
-
-	  		  if(delayRead(&myDelay)){
-	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  	  	 	  K++;
-	  		  }
-	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
-	  			  delayWrite(&myDelay, TIEMPOS[SEGUNDO]);
-	  			  K = INICIO;
-	  			  myEstado_t = estado_C;
-	  		  }
-	  		  break;
-
-	  case estado_C:
-
-	  	  		  if(delayRead(&myDelay)){
-	  	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  	  	  	 	  K++;
-	  	  		  }
-	  	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
-	  	  			  delayWrite(&myDelay, TIEMPOS[TERCERO]);
-	  	  			  K = INICIO;
-	  	  			  myEstado_t = estado_D;
-	  	  		  }
-	  	  		  break;
-
-	  case estado_D:
-
-	  	  	  		  if(delayRead(&myDelay)){
-	  	  	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  	  	  	  	 	  K++;
-	  	  	  		  }
-	  	  	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
-	  	  	  			  delayWrite(&myDelay, TIEMPOS[INICIO]);
-	  	  	  			  K = INICIO;
-	  	  	  			  myEstado_t = estado_A;
-	  	  	  		  }
-	  	  	  		  break;
-//Fin del case
-	  }
 
 // Fin del ciclo while
   }

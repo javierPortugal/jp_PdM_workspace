@@ -21,6 +21,7 @@
 #include "API_delay.h"
 
 
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -74,6 +75,7 @@ void debounceFSM_update();		// debe leer las entradas, resolver la lógica de tr
 void buttonPressed();			// debe encender el LED
 void buttonReleased();			// debe apagar el LED
 
+
 typedef enum{
  BUTTON_UP,
  BUTTON_FALLING,
@@ -81,8 +83,11 @@ typedef enum{
  BUTTON_RAISING,
  } debounceState_t;
 
+
  debounceState_t myEstado_t;
+
  entero32 K =INICIO;
+
  const tick_t TIEMPOS[] = {MEDIOSEG,CIENMILISEG,CIENMILISEG,UNSEG,CUARENTAMILISEG};
 
 delay_t myDelay;

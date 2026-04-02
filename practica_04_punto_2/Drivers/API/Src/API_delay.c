@@ -12,6 +12,8 @@
 
 
 
+
+
 void delayInit( delay_t * delay, tick_t duration ){
 	// Inicializo el delay con la duración dada e inicializar como no corriendo
 	  if(delay != NULL) {
