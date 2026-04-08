@@ -18,7 +18,9 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <string.h>
 #include "API_delay.h"
+#include "API_uart.h"
 
 
 /* Private includes ----------------------------------------------------------*/
@@ -50,7 +52,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-UART_HandleTypeDef huart2;
+//UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
@@ -59,7 +61,7 @@ UART_HandleTypeDef huart2;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_USART2_UART_Init(void);
+//static void MX_USART2_UART_Init(void);
 
 
 
@@ -78,7 +80,7 @@ static void MX_USART2_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	uint8_t pbuff[2];
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -99,7 +101,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_USART2_UART_Init();
+  //MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
   delay_t myDelay;
@@ -113,7 +115,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 
-  estado_t myEstado_t;
+  //estado_t myEstado_t;
 
   const tick_t TIEMPOS[] = {MEDIOSEG,CIENMILISEG,CIENMILISEG,UNSEG};
   delayInit(&myDelay, TIEMPOS[INICIO]);
@@ -128,72 +130,33 @@ int main(void)
 
   HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
   HAL_Delay(CINCOSEG);
-  myEstado_t = estado_A;
-  entero32 K =INICIO;
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
+  HAL_Delay(UNSEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, RESET);
+  HAL_Delay(CIENMILISEG);
+  HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, SET);
+  HAL_Delay(CIENMILISEG);
+  //myEstado_t = estado_A;
+  //entero32 K =INICIO;
 
+uartInit();
 
   while(1){
 /*
- * Implemento una secuencia para que el LED2 tome cada valor del vector TIEMPOS[] y se ejecute 5 veces
- *posteriormente se verifica que se cumplieron los ciclos de iluminacion y que el delay no este corriendo
- *para poder escribir el nuevo valor de retardo
+ *
+ *
  * */
-	  switch (myEstado_t){
+	  /* Implemento un Loopback de UART */
+	      uartReceiveStringSize(pbuff,1);
+	  	  uartSendStringSize(pbuff,1);
 
-	  case estado_A:
 
-		  if(delayRead(&myDelay)){
-	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  	 	  K++;
-		  }
-		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
-
-			  delayWrite(&myDelay, TIEMPOS[PRIMERO]);
-			  K = INICIO;
-			  myEstado_t = estado_B;
-		  }
-		  break;
-
-	  case estado_B:
-
-	  		  if(delayRead(&myDelay)){
-	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  	  	 	  K++;
-	  		  }
-	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
-	  			  delayWrite(&myDelay, TIEMPOS[SEGUNDO]);
-	  			  K = INICIO;
-	  			  myEstado_t = estado_C;
-	  		  }
-	  		  break;
-
-	  case estado_C:
-
-	  	  		  if(delayRead(&myDelay)){
-	  	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  	  	  	 	  K++;
-	  	  		  }
-	  	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
-	  	  			  delayWrite(&myDelay, TIEMPOS[TERCERO]);
-	  	  			  K = INICIO;
-	  	  			  myEstado_t = estado_D;
-	  	  		  }
-	  	  		  break;
-
-	  case estado_D:
-
-	  	  	  		  if(delayRead(&myDelay)){
-	  	  	  	  	 	  HAL_GPIO_TogglePin(LD2_GPIO_Port, LD2_Pin);
-	  	  	  	  	 	  K++;
-	  	  	  		  }
-	  	  	  		  if ((K >= CICLO) && (!delayIsRunning(&myDelay)) ){
-	  	  	  			  delayWrite(&myDelay, TIEMPOS[INICIO]);
-	  	  	  			  K = INICIO;
-	  	  	  			  myEstado_t = estado_A;
-	  	  	  		  }
-	  	  	  		  break;
-//Fin del case
-	  }
 
 // Fin del ciclo while
   }
@@ -253,38 +216,7 @@ void SystemClock_Config(void)
   }
 }
 
-/**
-  * @brief USART2 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_USART2_UART_Init(void)
-{
 
-  /* USER CODE BEGIN USART2_Init 0 */
-
-  /* USER CODE END USART2_Init 0 */
-
-  /* USER CODE BEGIN USART2_Init 1 */
-
-  /* USER CODE END USART2_Init 1 */
-  huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
-  huart2.Init.WordLength = UART_WORDLENGTH_8B;
-  huart2.Init.StopBits = UART_STOPBITS_1;
-  huart2.Init.Parity = UART_PARITY_NONE;
-  huart2.Init.Mode = UART_MODE_TX_RX;
-  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
-  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
-  if (HAL_UART_Init(&huart2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN USART2_Init 2 */
-
-  /* USER CODE END USART2_Init 2 */
-
-}
 
 /**
   * @brief GPIO Initialization Function
