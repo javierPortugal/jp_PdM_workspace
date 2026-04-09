@@ -24,17 +24,17 @@ static UART_HandleTypeDef apiUartInstance;
 /** Variable para indicar si el módulo está inicializado */
 static bool_t isModuleInit = false;
 
-/** @brief Función para imprimir mensajes de inicialización de UART
-  * @param pstring: Puntero al string a imprimir
-  * @param bufferSize: Tamaño del buffer para limpiar después de imprimir
+/** Función para imprimir mensajes de inicialización de UART
+  * pstring: Puntero al string a imprimir
+  * bufferSize: Tamaño del buffer para limpiar después de imprimir
   */
  static void uartInitPrint(uint8_t * pstring, size_t bufferSize){
 	uartSendString(pstring);
 	memset(pstring,0,bufferSize);
 }
 
-/** @brief Función para inicializar la UART
-  * @return: true si la inicialización fue exitosa, false en caso contrario
+/** Función para inicializar la UART
+  * return: true si la inicialización fue exitosa, false en caso contrario
   */
 bool_t uartInit(){
 	uint8_t buffConfig[BUFFER_LENGTH];
@@ -74,8 +74,8 @@ bool_t uartInit(){
 	}
 }
 
-/** @brief Función para enviar una cadena de caracteres por UART
-  * @param pstring: Puntero al string a enviar
+/** Función para enviar una cadena de caracteres por UART
+  * pstring: Puntero al string a enviar
   */
 void uartSendString(uint8_t * pstring){
 	uint16_t stringCharCounter = 0;
@@ -110,9 +110,9 @@ void uartSendString(uint8_t * pstring){
 	}
 }
 
-/** @brief Función para enviar una cadena de caracteres por UART con un tamaño específico
-  * @param pstring: Puntero al string a enviar
-  * @param size: Tamaño del string a enviar
+/** Función para enviar una cadena de caracteres por UART con un tamaño específico
+  * pstring: Puntero al string a enviar
+  * size: Tamaño del string a enviar
   */
 void uartSendStringSize(uint8_t * pstring, uint16_t size){
 	uint16_t attemptCounter = 0;
@@ -139,9 +139,9 @@ void uartSendStringSize(uint8_t * pstring, uint16_t size){
 	}
 }
 
-/** @brief Función para recibir una cadena de caracteres por UART con un tamaño específico
-  * @param pstring: Puntero al buffer donde se almacenará la cadena recibida
-  * @param size: Tamaño del string a recibir
+/** Función para recibir una cadena de caracteres por UART con un tamaño específico
+  * pstring: Puntero al buffer donde se almacenará la cadena recibida
+  * size: Tamaño del string a recibir
   */
 void uartReceiveStringSize(uint8_t * pstring, uint16_t size){
 	HAL_StatusTypeDef ret;

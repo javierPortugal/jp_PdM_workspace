@@ -148,15 +148,12 @@ int main(void)
 
   while(1){
 
-	  // Eco de UART
-    uartReceiveStringSize(pdata,1);
-		if(isNewDataOnRx()){
-			uartSendStringSize(pdata,1);
-		}
+	  //uARt ECO
+	  uartReceiveStringSize(pdata,1);
+	  	if(isNewDataOnRx()){
+	  	    uartSendStringSize(pdata,1);
+	  	}
 
-
-
-// Fin del ciclo while
   }
 
 
@@ -168,8 +165,8 @@ int main(void)
  /* USER CODE END 3 */
 
 /**
-  * @brief System Clock Configuration
-  * @retval None
+  * System Clock Configuration
+  * retval None
   */
 void SystemClock_Config(void)
 {
@@ -217,9 +214,7 @@ void SystemClock_Config(void)
 
 
 /**
-  * @brief GPIO Initialization Function
-  * @param None
-  * @retval None
+  *GPIO Initialization Function
   */
 static void MX_GPIO_Init(void)
 {

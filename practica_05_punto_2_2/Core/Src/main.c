@@ -79,7 +79,7 @@ static void MX_GPIO_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint8_t pdata[50];
+	//uint8_t pdata[50];
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -147,16 +147,9 @@ int main(void)
   cmdParserInit();
 
   while(1){
+	  //llamada continua a uART
+	  cmdPoll();
 
-	  // Eco de UART
-    uartReceiveStringSize(pdata,1);
-		if(isNewDataOnRx()){
-			uartSendStringSize(pdata,1);
-		}
-
-
-
-// Fin del ciclo while
   }
 
 
