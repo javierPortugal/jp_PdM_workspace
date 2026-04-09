@@ -46,6 +46,24 @@ void uartSendStringSize(uint8_t * pstring, uint16_t size);
   */
 void uartReceiveStringSize(uint8_t * pstring, uint16_t size);
 
+/** @brief Función para saber si hubo una lectura exitosa
+ *  @return: true si hay nuevos datos, false en caso contrario
+ */
+bool isNewDataOnRx(void);
+
+/** @brief Función para obtener la tasa de baudios actual
+ *  @return: La tasa de baudios actual
+ */
+uint32_t getCurrentBaudrate(void);
+
+/** @brief Función para cambiar la tasa de baudios
+ *  @param newBaudrate: La nueva tasa de baudios a configurar
+ *  @return: true si el cambio fue exitoso, false en caso contrario
+ */
+bool_t changeCurrentBaudrate(uint32_t newBaudrate);
+
+
+
 
 
 #endif /* API_INC_API_UART_H_ */

@@ -21,8 +21,17 @@
 /** Estructura para la instancia de UART */
 static UART_HandleTypeDef apiUartInstance;
 
+/** Variable para el baudrate de la UART*/
+static uint32_t currentUartBaudrate;
+
+
 /** Variable para indicar si el módulo está inicializado */
 static bool_t isModuleInit = false;
+
+/** Variable para saber si hubo nuevos datos en RX */
+static bool_t isNewData = false;
+
+
 
 /** @brief Función para imprimir mensajes de inicialización de UART
   * @param pstring: Puntero al string a imprimir
@@ -32,6 +41,70 @@ static bool_t isModuleInit = false;
 	uartSendString(pstring);
 	memset(pstring,0,bufferSize);
 }
+
+ /** @brief Función para obtener la tasa de baudios actual
+  *  @return: La tasa de baudios actual
+  */
+ uint32_t getCurrentBaudrate(void){
+ 	return currentUartBaudrate;
+ }
+
+ /** @brief Función para cambiar la tasa de baudios
+  *  @param newBaudrate: La nueva tasa de baudios a configurar
+  *  @return: true si el cambio fue exitoso, false en caso contrario
+  */
+ bool_t changeCurrentBaudrate(uint32_t newBaudrate){
+ 	uint8_t buffConfig[BUFFER_LENGTH];
+ 	isModuleInit = false;
+
+ 	// Configuración de la instancia de UART
+ 	apiUartInstance.Instance = USART2;
+ 	apiUartInstance.Init.BaudRate = newBaudrate;
+ 	apiUartInstance.Init.WordLength = UART_WORDLENGTH_8B;
+ 	apiUartInstance.Init.StopBits = UART_STOPBITS_1;
+ 	apiUartInstance.Init.Parity = UART_PARITY_NONE;
+ 	apiUartInstance.Init.Mode = UART_MODE_TX_RX;
+ 	apiUartInstance.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+ 	apiUartInstance.Init.OverSampling = UART_OVERSAMPLING_16;
+ 	// Inicialización de la UART
+ 	if (HAL_UART_Init(&apiUartInstance) != HAL_OK)
+ 	{
+ 		return false;
+ 	} else {
+ 		currentUartBaudrate = newBaudrate;
+ 		isModuleInit = true;
+ 		// Imprimir configuración de UART
+ 		sprintf((char*)buffConfig,"Uart Configurada!\r\n");
+ 		uartInitPrint(buffConfig, BUFFER_LENGTH);
+
+ 		sprintf((char*)buffConfig,"BaudRate: %ld \r\n",apiUartInstance.Init.BaudRate);
+ 		uartInitPrint(buffConfig, BUFFER_LENGTH);
+
+ 		sprintf((char*)buffConfig,"Longitud de Palabra: 8 BITS\r\n");
+ 		uartInitPrint(buffConfig, BUFFER_LENGTH);
+
+ 		sprintf((char*)buffConfig,"Bit de Paridad: NO\r\n");
+ 		uartInitPrint(buffConfig, BUFFER_LENGTH);
+
+ 		sprintf((char*)buffConfig,"Bits de Stop: 1 BIT\r\n");
+ 		uartInitPrint(buffConfig, BUFFER_LENGTH);
+
+ 		return true;
+ 	}
+ }
+
+ /** @brief Función para saber si hubo una lectura exitosa
+  *  @return: true si hay nuevos datos, false en caso contrario
+  */
+ bool isNewDataOnRx(void) {
+ 	if(isNewData){
+ 		isNewData=false;
+ 		return true;
+ 	} else{
+ 		return false;
+ 	}
+ }
+
 
 /** @brief Función para inicializar la UART
   * @return: true si la inicialización fue exitosa, false en caso contrario
@@ -158,13 +231,14 @@ void uartReceiveStringSize(uint8_t * pstring, uint16_t size){
 
 	// Validar que el tamaño esté dentro de los límites permitidos
 	if(UART_MIN_STRING_LENGTH <= size && size <= UART_MAX_STRING_LENGTH) {
-		while(1) {
+
 			// Intentar recibir el string por UART, reintentando hasta el número máximo de intentos, esquema bloqueante
 			ret = HAL_UART_Receive(&apiUartInstance, pstring, size, UART_TRANSMIT_TIMEOUT);
 			if(ret == HAL_OK) {
+				isNewData=true;
 				return;
 			}
-		}
+
 	}
 }
 

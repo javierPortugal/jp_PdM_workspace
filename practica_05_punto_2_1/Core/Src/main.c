@@ -21,6 +21,8 @@
 #include <string.h>
 #include "API_delay.h"
 #include "API_uart.h"
+#include "API_cmdparser.h"
+
 
 
 /* Private includes ----------------------------------------------------------*/
@@ -73,14 +75,11 @@ static void MX_GPIO_Init(void);
 /* Private user code ---------------------------------------------------------*/
 
 
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint8_t pbuff[2];
+	uint8_t pdata[50];
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -121,7 +120,7 @@ int main(void)
   delayInit(&myDelay, TIEMPOS[INICIO]);
 
 //*****************************************************************************************************************
-//*************     PUNTO 1 de la Practica 5 		*******************************************************************
+//*************     PUNTO 2 de la Practica 5 		*******************************************************************
 
 
 //Aqui solamente se asigna un tiempo y el LD2 prendiendo y apagando para indicar el inicio del ciclo
@@ -144,13 +143,16 @@ int main(void)
   //myEstado_t = estado_A;
   //entero32 K =INICIO;
 
-uartInit();
+  uartInit();
+  cmdParserInit();
 
   while(1){
 
-	  /* Implemento el mensaje de la configuracion con el UART */
-	      uartReceiveStringSize(pbuff,1);
-	  	  uartSendStringSize(pbuff,1);
+	  // Eco de UART
+    uartReceiveStringSize(pdata,1);
+		if(isNewDataOnRx()){
+			uartSendStringSize(pdata,1);
+		}
 
 
 
