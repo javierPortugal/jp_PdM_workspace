@@ -24,41 +24,41 @@
 #define USART_RX_Pin GPIO_PIN_3
 #define USART_RX_GPIO_Port GPIOA
 
-/** @brief Función para inicializar la UART
-  * @return: true si la inicialización fue exitosa, false en caso contrario
+/** Función para inicializar la UART
+  * return: true si la inicialización fue exitosa, false en caso contrario
   */
 bool_t uartInit(void);
 
-/** @brief Función para enviar una cadena de caracteres por UART
-  * @param pstring: Puntero al string a enviar
+/** Función para enviar una cadena de caracteres por UART
+  * pstring: Puntero al string a enviar
   */
 void uartSendString(uint8_t * pstring);
 
-/** @brief Función para enviar una cadena de caracteres por UART con un tamaño específico
-  * @param pstring: Puntero al string a enviar
-  * @param size: Tamaño del string a enviar
+/** Función para enviar una cadena de caracteres por UART con un tamaño específico
+  * pstring: Puntero al string a enviar
+  * size: Tamaño del string a enviar
   */
 void uartSendStringSize(uint8_t * pstring, uint16_t size);
 
-/** @brief Función para recibir una cadena de caracteres por UART con un tamaño específico
-  * @param pstring: Puntero al buffer donde se almacenará la cadena recibida
-  * @param size: Tamaño del string a recibir
+/** Función para recibir una cadena de caracteres por UART con un tamaño específico
+  * pstring: Puntero al buffer donde se almacenará la cadena recibida
+  * size: Tamaño del string a recibir
   */
 void uartReceiveStringSize(uint8_t * pstring, uint16_t size);
 
-/** @brief Función para saber si hubo una lectura exitosa
- *  @return: true si hay nuevos datos, false en caso contrario
+/** Función para saber si hubo una lectura exitosa
+ *  return: true si hay nuevos datos, false en caso contrario
  */
 bool isNewDataOnRx(void);
 
-/** @brief Función para obtener la tasa de baudios actual
- *  @return: La tasa de baudios actual
+/**Función para obtener la tasa de baudios actual
+ * return: La tasa de baudios actual
  */
 uint32_t getCurrentBaudrate(void);
 
-/** @brief Función para cambiar la tasa de baudios
- *  @param newBaudrate: La nueva tasa de baudios a configurar
- *  @return: true si el cambio fue exitoso, false en caso contrario
+/** Función para cambiar la tasa de baudios
+ *  newBaudrate: La nueva tasa de baudios a configurar
+ *  return: true si el cambio fue exitoso, false en caso contrario
  */
 bool_t changeCurrentBaudrate(uint32_t newBaudrate);
 

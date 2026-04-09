@@ -33,25 +33,25 @@ static bool_t isNewData = false;
 
 
 
-/** Función para imprimir mensajes de inicialización de UART
-  * pstring: Puntero al string a imprimir
-  * bufferSize: Tamaño del buffer para limpiar después de imprimir
+/** @brief Función para imprimir mensajes de inicialización de UART
+  * @param pstring: Puntero al string a imprimir
+  * @param bufferSize: Tamaño del buffer para limpiar después de imprimir
   */
  static void uartInitPrint(uint8_t * pstring, size_t bufferSize){
 	uartSendString(pstring);
 	memset(pstring,0,bufferSize);
 }
 
- /** Función para obtener la tasa de baudios actual
-  * return: La tasa de baudios actual
+ /** @brief Función para obtener la tasa de baudios actual
+  *  @return: La tasa de baudios actual
   */
  uint32_t getCurrentBaudrate(void){
  	return currentUartBaudrate;
  }
 
- /** Función para cambiar la tasa de baudios
-  *  newBaudrate: La nueva tasa de baudios a configurar
-  *  return: true si el cambio fue exitoso, false en caso contrario
+ /** @brief Función para cambiar la tasa de baudios
+  *  @param newBaudrate: La nueva tasa de baudios a configurar
+  *  @return: true si el cambio fue exitoso, false en caso contrario
   */
  bool_t changeCurrentBaudrate(uint32_t newBaudrate){
  	uint8_t buffConfig[BUFFER_LENGTH];
@@ -93,8 +93,8 @@ static bool_t isNewData = false;
  	}
  }
 
- /** Función para saber si hubo una lectura exitosa
-  *  return: true si hay nuevos datos, false en caso contrario
+ /** @brief Función para saber si hubo una lectura exitosa
+  *  @return: true si hay nuevos datos, false en caso contrario
   */
  bool isNewDataOnRx(void) {
  	if(isNewData){
@@ -106,8 +106,8 @@ static bool_t isNewData = false;
  }
 
 
-/** Función para inicializar la UART
-  * return: true si la inicialización fue exitosa, false en caso contrario
+/** @brief Función para inicializar la UART
+  * @return: true si la inicialización fue exitosa, false en caso contrario
   */
 bool_t uartInit(){
 	uint8_t buffConfig[BUFFER_LENGTH];
@@ -147,8 +147,8 @@ bool_t uartInit(){
 	}
 }
 
-/** Función para enviar una cadena de caracteres por UART
-  * pstring: Puntero al string a enviar
+/** @brief Función para enviar una cadena de caracteres por UART
+  * @param pstring: Puntero al string a enviar
   */
 void uartSendString(uint8_t * pstring){
 	uint16_t stringCharCounter = 0;
@@ -183,9 +183,9 @@ void uartSendString(uint8_t * pstring){
 	}
 }
 
-/** Función para enviar una cadena de caracteres por UART con un tamaño específico
-  * pstring: Puntero al string a enviar
-  * size: Tamaño del string a enviar
+/** @brief Función para enviar una cadena de caracteres por UART con un tamaño específico
+  * @param pstring: Puntero al string a enviar
+  * @param size: Tamaño del string a enviar
   */
 void uartSendStringSize(uint8_t * pstring, uint16_t size){
 	uint16_t attemptCounter = 0;
@@ -212,9 +212,9 @@ void uartSendStringSize(uint8_t * pstring, uint16_t size){
 	}
 }
 
-/** Función para recibir una cadena de caracteres por UART con un tamaño específico
-  * pstring: Puntero al buffer donde se almacenará la cadena recibida
-  * size: Tamaño del string a recibir
+/** @brief Función para recibir una cadena de caracteres por UART con un tamaño específico
+  * @param pstring: Puntero al buffer donde se almacenará la cadena recibida
+  * @param size: Tamaño del string a recibir
   */
 void uartReceiveStringSize(uint8_t * pstring, uint16_t size){
 	HAL_StatusTypeDef ret;
