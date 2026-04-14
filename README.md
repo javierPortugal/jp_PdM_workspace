@@ -15,8 +15,8 @@ La siguiente lista muestra los proyectos hechos hasta ahora:
 - [x] Practica 3
 - [x] Practica 4
 - [x] Practica 5
-- [ ] Practica 6
-- [ ] Practica 7
+- [x] Propuesta de TP
+- [ ] Reporte de TP
 
 Correos importantes:
 - pbos@fi.uba.ar
