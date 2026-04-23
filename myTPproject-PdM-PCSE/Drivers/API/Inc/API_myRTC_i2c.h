@@ -36,8 +36,8 @@ int conversionDec(uint8_t val);
 
 //funciones para grabar datos en y leer datos del RTC
 
-void Set_Time (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year);
-void Get_Time (void);
+void set_time (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year);
+void get_time (void);
 
 
 

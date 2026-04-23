@@ -24,6 +24,7 @@
 #include <API_mylcd_i2c.h>
 #include <API_myRTC_i2c.h>
 #include "stdio.h"
+#include <string.h>
 
 /* USER CODE END Includes */
 
@@ -134,23 +135,47 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+	  #define ESPACIO_SIZE 2
+  	  char mensaje_hora[]= "La hora actual es: \n\r";
+  	  char espacio[]= "\n\r";
+
+  	  get_time();
+  	  sprintf (data_buffer, "Hora: %02d:%02d:%02d", rtc_time.hour, rtc_time.minutes, rtc_time.seconds);
+  	  mylcd_send_command(LINE1);
+  	  mylcd_send_string(data_buffer);
+  	  HAL_Delay(500);
+  	  HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, 100);
+  	  HAL_UART_Transmit(&huart1, (uint8_t *)( mensaje_hora) ,  strlen(mensaje_hora), 100);
+  	  HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, 100);
+  	  HAL_UART_Transmit(&huart1, (uint8_t *)(data_buffer) ,  strlen(data_buffer), 100);  //"presentacion de dato\n\r"
+  	  HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, 100);
+  	  HAL_Delay(500);
+
+  	  char mensaje_fecha[]= "La fecha actual es: \n\r";
+
+  	  sprintf (data_buffer, "Fecha: %02d-%02d-20%02d", rtc_time.dayofmonth, rtc_time.month, rtc_time.year);
+  	  mylcd_send_command(LINE2);
+  	  mylcd_send_string(data_buffer);
+
+  	 HAL_Delay(500);
+  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, 100);
+  	 HAL_UART_Transmit(&huart1, (uint8_t *)( mensaje_fecha) ,  strlen(mensaje_fecha), 100);
+  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, 100);
+  	 HAL_UART_Transmit(&huart1, (uint8_t *)(data_buffer) ,  strlen(data_buffer), 100);  //"presentacion de dato\n\r"
+  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, 100);
+  	 HAL_Delay(500);
+
+  	  mylcd_send_command(LINE3);
+  	  mylcd_send_string("try 15");
+
+  	  HAL_Delay(500);
+
+
+
   while (1)
   {
 
 
-	  Get_Time();
-	  sprintf (data_buffer, "Hora: %02d:%02d:%02d", rtc_time.hour, rtc_time.minutes, rtc_time.seconds);
-	  mylcd_send_command(LINE1);
-	  mylcd_send_string(data_buffer);
-
-	  sprintf (data_buffer, "Fecha: %02d-%02d-20%02d", rtc_time.dayofmonth, rtc_time.month, rtc_time.year);
-	  mylcd_send_command(LINE2);
-	  mylcd_send_string(data_buffer);
-
-	  mylcd_send_command(LINE3);
-	  mylcd_send_string("try 7");
-
-	  HAL_Delay(500);
 
     /* USER CODE END WHILE */
 

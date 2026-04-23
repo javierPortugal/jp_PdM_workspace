@@ -27,9 +27,9 @@ int conversionDec(uint8_t val)
 
 
 
-// function to set time
+// funcion para guarda fecha y hora
 
-void Set_Time (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year)
+void set_time (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year)
 {
 	uint8_t set_time[7];
 	set_time[0] = conversionBcd(sec);
@@ -43,7 +43,7 @@ void Set_Time (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom,
 	HAL_I2C_Mem_Write(&hi2c1, RTC_ADDRESS, 0x00, 1, set_time, 7, 1000);
 }
 
-void Get_Time (void)
+void get_time (void)
 {
 	uint8_t get_time[7];
 	HAL_I2C_Mem_Read(&hi2c1, RTC_ADDRESS, 0x00, 1, get_time, 7, 1000);
