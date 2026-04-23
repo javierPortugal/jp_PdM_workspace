@@ -136,20 +136,24 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
 	  #define ESPACIO_SIZE 2
+	  #define TIMEOUT	   100
+	  #define FIVESECONDS  5000
+	  #define HALFSECONDS  500
+	  #define ONESECONDS   1000
   	  char mensaje_hora[]= "La hora actual es: \n\r";
   	  char espacio[]= "\n\r";
+  	  char espacio_final[]= "\n\n\r";
 
   	  get_time();
   	  sprintf (data_buffer, "Hora: %02d:%02d:%02d", rtc_time.hour, rtc_time.minutes, rtc_time.seconds);
   	  mylcd_send_command(LINE1);
   	  mylcd_send_string(data_buffer);
-  	  HAL_Delay(500);
-  	  HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, 100);
-  	  HAL_UART_Transmit(&huart1, (uint8_t *)( mensaje_hora) ,  strlen(mensaje_hora), 100);
-  	  HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, 100);
-  	  HAL_UART_Transmit(&huart1, (uint8_t *)(data_buffer) ,  strlen(data_buffer), 100);  //"presentacion de dato\n\r"
-  	  HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, 100);
-  	  HAL_Delay(500);
+  	  HAL_Delay(HALFSECONDS);
+  	  HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
+  	  HAL_UART_Transmit(&huart1, (uint8_t *)( mensaje_hora) ,  strlen(mensaje_hora), TIMEOUT);
+  	  HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
+  	  HAL_UART_Transmit(&huart1, (uint8_t *)(data_buffer) ,  strlen(data_buffer), TIMEOUT);
+  	  HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
 
   	  char mensaje_fecha[]= "La fecha actual es: \n\r";
 
@@ -157,29 +161,139 @@ int main(void)
   	  mylcd_send_command(LINE2);
   	  mylcd_send_string(data_buffer);
 
-  	 HAL_Delay(500);
-  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, 100);
-  	 HAL_UART_Transmit(&huart1, (uint8_t *)( mensaje_fecha) ,  strlen(mensaje_fecha), 100);
-  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, 100);
-  	 HAL_UART_Transmit(&huart1, (uint8_t *)(data_buffer) ,  strlen(data_buffer), 100);  //"presentacion de dato\n\r"
-  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, 100);
-  	 HAL_Delay(500);
+  	 HAL_Delay(HALFSECONDS);
+  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
+  	 HAL_UART_Transmit(&huart1, (uint8_t *)( mensaje_fecha) ,  strlen(mensaje_fecha), TIMEOUT);
+  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
+  	 HAL_UART_Transmit(&huart1, (uint8_t *)(data_buffer) ,  strlen(data_buffer), TIMEOUT);
+  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
+  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio_final) ,  ESPACIO_SIZE, TIMEOUT);
 
-  	  mylcd_send_command(LINE3);
-  	  mylcd_send_string("try 15");
+  	 HAL_Delay(HALFSECONDS);
 
-  	  HAL_Delay(500);
+  	 mylcd_send_command(LINE3);
+  	 mylcd_send_string("try 22");
 
+  	 HAL_Delay(FIVESECONDS);
+/*
+  	 mylcd_clear ();
+  	 mylcd_send_command(LINE1);
+  	 mylcd_send_string("Para iniciar la ");
+  	 mylcd_send_command(LINE2);
+  	 mylcd_send_string("secuencia oprime el ");
+  	 mylcd_send_command(LINE3);
+  	 mylcd_send_string("pulsador azul ..... ");
+*/
+
+
+  	typedef enum{
+  	 INICIAL,
+  	 LECTURA_TIEMPO_HORA,
+	 LECTURA_TIEMPO_FECHA,
+  	 LECTURA_TEMPERATURA,
+	 IMPRESION_TIEMPO_TEMPERATURA,
+  	 } mySequenceState_t;
+
+
+  	mySequenceState_t myEstado_t;
+
+  	myEstado_t = INICIAL;
 
 
   while (1)
   {
+	  switch (myEstado_t){
 
+	  case INICIAL:
+		  /*
+		  	 mylcd_clear ();
+		  	 mylcd_send_command(LINE1);
+		  	 mylcd_send_string("Para iniciar la ");
+		  	 mylcd_send_command(LINE2);
+		  	 mylcd_send_string("secuencia oprime el ");
+		  	 mylcd_send_command(LINE3);
+		  	 mylcd_send_string("pulsador azul ..... ");
+		  	 //HAL_Delay(FIVESECONDS);*/
+
+		  if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
+			  //mylcd_clear ();
+			  //mylcd_send_command(LINE1);
+			  //mylcd_send_string("Pulsador OFF ");
+			  //HAL_Delay(FIVESECONDS);
+			  	 mylcd_clear ();
+			  	 mylcd_send_command(LINE1);
+			  	 mylcd_send_string("Para iniciar la ");
+			  	 mylcd_send_command(LINE2);
+			  	 mylcd_send_string("secuencia oprime el ");
+			  	 mylcd_send_command(LINE3);
+			  	 mylcd_send_string("pulsador azul ..... ");
+			  	 HAL_Delay(ONESECONDS);
+
+
+		  }
+		  if (!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
+			  /*mylcd_clear ();
+			  mylcd_send_command(LINE2);
+			  mylcd_send_string("Pulsador ON ");
+			  HAL_Delay(FIVESECONDS);*/
+			  myEstado_t = LECTURA_TIEMPO_HORA;
+
+
+		  }
+	  break;
+
+	  case LECTURA_TIEMPO_HORA:
+		  get_time();
+		  sprintf (data_buffer, "Hora: %02d:%02d:%02d", rtc_time.hour, rtc_time.minutes, rtc_time.seconds);
+		  mylcd_clear ();
+		  mylcd_send_command(LINE1);
+		  mylcd_send_string("Lectura de tiempo");
+		  mylcd_send_command(LINE3);
+		  mylcd_send_string(data_buffer);
+		  HAL_Delay(ONESECONDS);
+
+		  myEstado_t = INICIAL;
+
+	  break;
+	  case LECTURA_TIEMPO_FECHA:
+
+	  	  if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
+
+	  	  myEstado_t = INICIAL;
+	  	  }
+	  	  if (!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
+
+	  	  myEstado_t = INICIAL;
+	  	  }
+	  break;
+	  case LECTURA_TEMPERATURA:
+
+	  	  if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
+
+	  	  myEstado_t = INICIAL;
+	  	  }
+	  	  if (!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
+
+	  	  myEstado_t = INICIAL;
+	  	  }
+	  break;
+	  case IMPRESION_TIEMPO_TEMPERATURA:
+
+	  	  if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
+
+	  	  myEstado_t = INICIAL;
+	  	  }
+	  	  if (!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
+
+	  	  myEstado_t = INICIAL;
+	  	  }
+	  break;
 
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  }
   }
   /* USER CODE END 3 */
 }
