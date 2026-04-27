@@ -5,7 +5,7 @@
  *      Author: javie
  */
 
-//#define RTC_ADDRESS 0xD0
+
 #include "API_myRTC_i2c.h"
 
 extern I2C_HandleTypeDef hi2c1;
@@ -14,12 +14,12 @@ extern I2C_HandleTypeDef hi2c1;
 RTC_TIME rtc_time;
 char data_buffer[21];
 
-// Convert normal decimal numbers to binary coded decimal
+// decimal a BCD
 uint8_t conversionBcd(int val)
 {
   return (uint8_t)( (val/10*16) + (val%10) );
 }
-// Convert binary coded decimal to normal decimal numbers
+//BCD a decimal
 int conversionDec(uint8_t val)
 {
   return (int)( (val/16*10) + (val%16) );
@@ -27,7 +27,7 @@ int conversionDec(uint8_t val)
 
 
 
-// funcion para guarda fecha y hora
+// funcion para asignar fecha y hora al modulo
 
 void set_time (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year)
 {

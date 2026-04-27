@@ -23,7 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include <API_mylcd_i2c.h>
 #include <API_myRTC_i2c.h>
-#include "stdio.h"
+#include <stdio.h>
 #include <string.h>
 
 /* USER CODE END Includes */
@@ -50,6 +50,12 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
+#define TC74_ADDRESS 0x48 << 1
+#define REG_TEMP  0x00
+
+
+
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -59,6 +65,12 @@ static void MX_USART2_UART_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
+
+// Redirigir printf a UART2
+int __io_putchar(int ch) {
+  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+  return ch;
+}
 
 /* USER CODE END PFP */
 
@@ -76,6 +88,7 @@ static void MX_USART1_UART_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+
 
   /* USER CODE END 1 */
 
@@ -101,33 +114,13 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  mylcd_init();
+   //set_time(00, 52, 8, 3, 22,4, 26);
+   mylcd_init();
 
-   //Set_Time(00, 52, 8, 3, 22,4, 26);
-/*
-   mylcd_send_command(LINE1);
-   mylcd_send_string("hola se actualizo");
-
-   mylcd_send_command(LINE2);
-   mylcd_send_string("variable data upper ");
-
-   mylcd_send_command(LINE3);
-   mylcd_send_string("y data lower");
-
-   mylcd_send_command(LINE4);
-   mylcd_send_string("para enviar comandos");
-
-   HAL_Delay(3000);
-
-   mylcd_clear ();
-   HAL_Delay(1000);
-   mylcd_send_command(LINE2);
-   mylcd_send_string("eso es todo eso  ");
-
-   mylcd_send_command(LINE3);
-   mylcd_send_string("es todo amigos !!");
-*/
-
+   int8_t temperatura = 0;
+   uint8_t reg = REG_TEMP;
+   //monitore por serial y Tera term
+   printf("Iniciando lectura de TC74...\r\n");
 
 
 
@@ -167,14 +160,48 @@ int main(void)
   	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
   	 HAL_UART_Transmit(&huart1, (uint8_t *)(data_buffer) ,  strlen(data_buffer), TIMEOUT);
   	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
-  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio_final) ,  ESPACIO_SIZE, TIMEOUT);
+  	// HAL_UART_Transmit(&huart1, (uint8_t *)( espacio_final) ,  ESPACIO_SIZE, TIMEOUT);
 
   	 HAL_Delay(HALFSECONDS);
 
-  	 mylcd_send_command(LINE3);
-  	 mylcd_send_string("try 22");
+  	char mensaje_temperatura[]= "La temperatura actual es: \n\r";
 
-  	 HAL_Delay(FIVESECONDS);
+// 1. Escribir el puntero del registro que queremos leer
+ 	 if (HAL_I2C_Master_Transmit(&hi2c1, TC74_ADDRESS, &reg, 1, 100) != HAL_OK) {
+ 	     printf("Error: Sensor no encontrado\r\n");
+ 	   }else {
+ 	         // 2. Leer el byte de temperatura
+ 	     if (HAL_I2C_Master_Receive(&hi2c1, TC74_ADDRESS, (uint8_t*)&temperatura, 1, 100) == HAL_OK) {
+ 	        printf("Temperatura actual es: %d grados C\r\n", temperatura);
+
+
+ 	          sprintf (data_buffer, "Temperatura: %d C", temperatura);
+ 	       	  mylcd_send_command(LINE3);
+ 	       	  mylcd_send_string(data_buffer);
+
+ 	       	HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
+ 	       	HAL_UART_Transmit(&huart1, (uint8_t *)( mensaje_temperatura) ,  strlen(mensaje_temperatura), TIMEOUT);
+ 	       	HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
+ 	       	HAL_UART_Transmit(&huart1, (uint8_t *)(data_buffer) ,  strlen(data_buffer), TIMEOUT);
+ 	       	HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
+ 	       	HAL_UART_Transmit(&huart1, (uint8_t *)( espacio_final) ,  ESPACIO_SIZE, TIMEOUT);
+
+ 	       	HAL_Delay(HALFSECONDS);
+
+
+ 	         }
+ 	     }
+
+ 	     HAL_Delay(1000); // Leer cada segundo
+
+
+
+  	 HAL_Delay(1000);
+
+  	// mylcd_send_command(LINE3);
+  	// mylcd_send_string("try 22");
+
+  	// HAL_Delay(FIVESECONDS);
 /*
   	 mylcd_clear ();
   	 mylcd_send_command(LINE1);
@@ -185,7 +212,7 @@ int main(void)
   	 mylcd_send_string("pulsador azul ..... ");
 */
 
-
+/*
   	typedef enum{
   	 INICIAL,
   	 LECTURA_TIEMPO_HORA,
@@ -199,101 +226,18 @@ int main(void)
 
   	myEstado_t = INICIAL;
 
+  	*/
+
 
   while (1)
   {
-	  switch (myEstado_t){
-
-	  case INICIAL:
-		  /*
-		  	 mylcd_clear ();
-		  	 mylcd_send_command(LINE1);
-		  	 mylcd_send_string("Para iniciar la ");
-		  	 mylcd_send_command(LINE2);
-		  	 mylcd_send_string("secuencia oprime el ");
-		  	 mylcd_send_command(LINE3);
-		  	 mylcd_send_string("pulsador azul ..... ");
-		  	 //HAL_Delay(FIVESECONDS);*/
-
-		  if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-			  //mylcd_clear ();
-			  //mylcd_send_command(LINE1);
-			  //mylcd_send_string("Pulsador OFF ");
-			  //HAL_Delay(FIVESECONDS);
-			  	 mylcd_clear ();
-			  	 mylcd_send_command(LINE1);
-			  	 mylcd_send_string("Para iniciar la ");
-			  	 mylcd_send_command(LINE2);
-			  	 mylcd_send_string("secuencia oprime el ");
-			  	 mylcd_send_command(LINE3);
-			  	 mylcd_send_string("pulsador azul ..... ");
-			  	 HAL_Delay(ONESECONDS);
 
 
-		  }
-		  if (!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-			  /*mylcd_clear ();
-			  mylcd_send_command(LINE2);
-			  mylcd_send_string("Pulsador ON ");
-			  HAL_Delay(FIVESECONDS);*/
-			  myEstado_t = LECTURA_TIEMPO_HORA;
+/* USER CODE END WHILE */
+
+/* USER CODE BEGIN 3 */
 
 
-		  }
-	  break;
-
-	  case LECTURA_TIEMPO_HORA:
-		  get_time();
-		  sprintf (data_buffer, "Hora: %02d:%02d:%02d", rtc_time.hour, rtc_time.minutes, rtc_time.seconds);
-		  mylcd_clear ();
-		  mylcd_send_command(LINE1);
-		  mylcd_send_string("Lectura de tiempo");
-		  mylcd_send_command(LINE3);
-		  mylcd_send_string(data_buffer);
-		  HAL_Delay(ONESECONDS);
-
-		  myEstado_t = INICIAL;
-
-	  break;
-	  case LECTURA_TIEMPO_FECHA:
-
-	  	  if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-
-	  	  myEstado_t = INICIAL;
-	  	  }
-	  	  if (!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-
-	  	  myEstado_t = INICIAL;
-	  	  }
-	  break;
-	  case LECTURA_TEMPERATURA:
-
-	  	  if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-
-	  	  myEstado_t = INICIAL;
-	  	  }
-	  	  if (!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-
-	  	  myEstado_t = INICIAL;
-	  	  }
-	  break;
-	  case IMPRESION_TIEMPO_TEMPERATURA:
-
-	  	  if (HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-
-	  	  myEstado_t = INICIAL;
-	  	  }
-	  	  if (!HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)){
-
-	  	  myEstado_t = INICIAL;
-	  	  }
-	  break;
-
-
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
-	  }
   }
   /* USER CODE END 3 */
 }
