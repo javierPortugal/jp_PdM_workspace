@@ -23,6 +23,8 @@
 /* USER CODE BEGIN Includes */
 #include <API_mylcd_i2c.h>
 #include <API_myRTC_i2c.h>
+#include "API_myTC74.h"
+
 #include <stdio.h>
 #include <string.h>
 
@@ -50,8 +52,8 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
-#define TC74_ADDRESS 0x48 << 1
-#define REG_TEMP  0x00
+//#define TC74_ADDRESS 0x48 << 1
+//#define REG_TEMP  0x00
 
 
 
@@ -117,10 +119,10 @@ int main(void)
    //set_time(00, 52, 8, 3, 22,4, 26);
    mylcd_init();
 
-   int8_t temperatura = 0;
-   uint8_t reg = REG_TEMP;
+   int8_t my_temperatura = 0;
+   //uint8_t reg = REG_TEMP;
    //monitore por serial y Tera term
-   printf("Iniciando lectura de TC74...\r\n");
+   printf("Primer inicio de lectura de TC74...\r\n");
 
 
 
@@ -160,10 +162,10 @@ int main(void)
   	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
   	 HAL_UART_Transmit(&huart1, (uint8_t *)(data_buffer) ,  strlen(data_buffer), TIMEOUT);
   	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
-  	// HAL_UART_Transmit(&huart1, (uint8_t *)( espacio_final) ,  ESPACIO_SIZE, TIMEOUT);
+  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio_final) ,  ESPACIO_SIZE, TIMEOUT);
 
   	 HAL_Delay(HALFSECONDS);
-
+/*
   	char mensaje_temperatura[]= "La temperatura actual es: \n\r";
 
 // 1. Escribir el puntero del registro que queremos leer
@@ -194,7 +196,7 @@ int main(void)
 
  	     HAL_Delay(1000); // Leer cada segundo
 
-
+*/
 
   	 HAL_Delay(1000);
 
@@ -236,6 +238,19 @@ int main(void)
 /* USER CODE END WHILE */
 
 /* USER CODE BEGIN 3 */
+	  my_temperatura =get_temperature(); // obtengo temperatura desde la función de la API
+
+	  if (my_temperatura != -1000) {
+
+	   sprintf (data_buffer, "Temperatura: %d C", my_temperatura);
+	   mylcd_send_command(LINE3);
+	   mylcd_send_string(data_buffer);
+
+	    }
+
+
+
+	  HAL_Delay(1000);   // Espera 1 segundo entre lecturas
 
 
   }

@@ -4,35 +4,44 @@
  *  Created on: 27 abr 2026
  *      Author: javie
  */
-
+/*
 #include "API_myTC74.h"
 
-#include "stm32f4xx_hal.h"
+void get_temperature(I2C_HandleTypeDef *hi2c) {
+    int8_t temp_val = 0;
+    uint8_t reg_addr = REG_TEMP;
 
-extern I2C_HandleTypeDef hi2c1;
-extern UART_HandleTypeDef huart1;
+    // 1. Apuntar al registro de temperatura
+    if (HAL_I2C_Master_Transmit(hi2c, TC74_ADDRESS, &reg_addr, 1, 100) != HAL_OK) {
+        printf("Error: Sensor no responde en bus I2C\r\n");
+        return;
+    }
 
-#define TC74_ADDRESS (0x48 << 1)
-#define REG_TEMP  0x00
-
-int8_t temperatura = 0;
-uint8_t reg = REG_TEMP;
-
-
-
-
-void get_temperature (){
-
-// 1. Escribir el puntero del registro que queremos leer
- 	 if(HAL_I2C_Master_Transmit(&hi2c1, TC74_ADDRESS, &reg, 1, 100) != HAL_OK)
- 	 {
- 	     printf("Error: Sensor no encontrado\r\n");
- 	   }else {
- 	         // 2. Leer el byte de temperatura
- 	     if (HAL_I2C_Master_Receive(&hi2c1, TC74_ADDRESS, (uint8_t*)&temperatura, 1, 100) == HAL_OK) {
- 	        printf("Temperatura actual es: %d grados C\r\n", temperatura);
- 	     }
- 	   }
-
+    // 2. Leer el valor
+    if (HAL_I2C_Master_Receive(hi2c, TC74_ADDRESS, (uint8_t*)&temp_val, 1, 100) == HAL_OK) {
+        printf("Temperatura actual es: %d grados C\r\n", temp_val);
+    } else {
+        printf("Error: Fallo al recibir datos\r\n");
+    }
 }
+*/
 
+#include "API_myTC74.h"
+#include <stdio.h>
+
+int8_t get_temperature(void) {
+    int8_t temperatura = 0;
+    uint8_t reg_temperatura = REG_TEMP;
+
+    // Usamos la capa de abstracción (Port)
+    if (port_I2C_Write_Temperature(TC74_ADDRESS, &reg_temperatura, 1) != PORT_OK) {
+        printf("Error: Sensor no encontrado\r\n");
+    } else {
+        if (port_I2C_Read_Temperature(TC74_ADDRESS, (uint8_t*)&temperatura, 1) == PORT_OK) {
+            printf("Temperatura actual es: %d grados C\r\n", temperatura);
+
+            return temperatura;
+        }
+    }
+    return -1000;
+}
