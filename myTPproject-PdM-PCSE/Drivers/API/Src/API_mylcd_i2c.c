@@ -1,13 +1,12 @@
 
 
 #include "API_mylcd_i2c.h"
-extern I2C_HandleTypeDef hi2c1;  //
 
-#define MYLCD_ADDRESS 		0x4E // LCD I2C extender address
 #define ONE_MILISECONDS 	1
 #define FIVE_MILISECONDS 	5
 #define TEN_MILISECONDS 	10
 #define FIFTHY_MILISECONDS 	50
+
 
 
 void mylcd_send_command  (char command)
@@ -23,7 +22,8 @@ void mylcd_send_command  (char command)
 	data_t[1] = data_upper|0x08;  //en=0, rs=0
 	data_t[2] = data_lower|0x0C;  //en=1, rs=0
 	data_t[3] = data_lower|0x08;  //en=0, rs=0
-	HAL_I2C_Master_Transmit (&hi2c1, MYLCD_ADDRESS,(uint8_t *) data_t, size, timeout);
+	// Ejemplo dentro de mylcd_send_command y mylcd_send_data:
+	LCD_IO_Transmit((uint8_t *) data_t, size);
 }
 
 void mylcd_send_data (char data)
@@ -39,7 +39,8 @@ void mylcd_send_data (char data)
 	data_t[1] = data_upper|0x09;  //en=0, rs=1
 	data_t[2] = data_lower|0x0D;  //en=1, rs=1
 	data_t[3] = data_lower|0x09;  //en=0, rs=1
-	HAL_I2C_Master_Transmit (&hi2c1, MYLCD_ADDRESS,(uint8_t *) data_t, size, timeout);
+	// Ejemplo dentro de mylcd_send_command y mylcd_send_data:
+	LCD_IO_Transmit((uint8_t *) data_t, size);
 }
 
 void mylcd_clear (void)
@@ -80,4 +81,8 @@ void mylcd_init (void)
 void mylcd_send_string (char *str)
 {
 	while (*str) mylcd_send_data (*str++);
+}
+
+void mylcd_put_cursor(uint8_t line) {
+    mylcd_send_command(line);
 }

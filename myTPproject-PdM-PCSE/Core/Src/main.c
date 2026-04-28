@@ -120,7 +120,7 @@ int main(void)
    mylcd_init();
 
    int8_t my_temperatura = 0;
-   //uint8_t reg = REG_TEMP;
+
    //monitore por serial y Tera term
    printf("Primer inicio de lectura de TC74...\r\n");
 
@@ -165,45 +165,10 @@ int main(void)
   	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio_final) ,  ESPACIO_SIZE, TIMEOUT);
 
   	 HAL_Delay(HALFSECONDS);
-/*
-  	char mensaje_temperatura[]= "La temperatura actual es: \n\r";
-
-// 1. Escribir el puntero del registro que queremos leer
- 	 if (HAL_I2C_Master_Transmit(&hi2c1, TC74_ADDRESS, &reg, 1, 100) != HAL_OK) {
- 	     printf("Error: Sensor no encontrado\r\n");
- 	   }else {
- 	         // 2. Leer el byte de temperatura
- 	     if (HAL_I2C_Master_Receive(&hi2c1, TC74_ADDRESS, (uint8_t*)&temperatura, 1, 100) == HAL_OK) {
- 	        printf("Temperatura actual es: %d grados C\r\n", temperatura);
-
-
- 	          sprintf (data_buffer, "Temperatura: %d C", temperatura);
- 	       	  mylcd_send_command(LINE3);
- 	       	  mylcd_send_string(data_buffer);
-
- 	       	HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
- 	       	HAL_UART_Transmit(&huart1, (uint8_t *)( mensaje_temperatura) ,  strlen(mensaje_temperatura), TIMEOUT);
- 	       	HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
- 	       	HAL_UART_Transmit(&huart1, (uint8_t *)(data_buffer) ,  strlen(data_buffer), TIMEOUT);
- 	       	HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
- 	       	HAL_UART_Transmit(&huart1, (uint8_t *)( espacio_final) ,  ESPACIO_SIZE, TIMEOUT);
-
- 	       	HAL_Delay(HALFSECONDS);
-
-
- 	         }
- 	     }
-
- 	     HAL_Delay(1000); // Leer cada segundo
-
-*/
 
   	 HAL_Delay(1000);
 
-  	// mylcd_send_command(LINE3);
-  	// mylcd_send_string("try 22");
 
-  	// HAL_Delay(FIVESECONDS);
 /*
   	 mylcd_clear ();
   	 mylcd_send_command(LINE1);
@@ -235,22 +200,38 @@ int main(void)
   {
 
 
-/* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
-/* USER CODE BEGIN 3 */
+    /* USER CODE BEGIN 3 */
+	  get_time();
+	  sprintf (data_buffer, "Hora: %02d:%02d:%02d", rtc_time.hour, rtc_time.minutes, rtc_time.seconds);
+	  mylcd_put_cursor(LINE1);
+	  mylcd_send_string(data_buffer);
+
+  	  sprintf (data_buffer, "Fecha: %02d-%02d-20%02d", rtc_time.dayofmonth, rtc_time.month, rtc_time.year);
+  	  mylcd_put_cursor(LINE2);
+  	  mylcd_send_string(data_buffer);
+
 	  my_temperatura =get_temperature(); // obtengo temperatura desde la función de la API
 
-	  if (my_temperatura != -1000) {
+	  if (my_temperatura != -200) {
 
 	   sprintf (data_buffer, "Temperatura: %d C", my_temperatura);
-	   mylcd_send_command(LINE3);
+	   mylcd_put_cursor(LINE3);
 	   mylcd_send_string(data_buffer);
 
 	    }
 
+	  mylcd_put_cursor(LINE4);
+	  mylcd_send_string("STM32 todo integrado");
 
 
-	  HAL_Delay(1000);   // Espera 1 segundo entre lecturas
+
+	  HAL_Delay(2000);   // Espera 1 segundo entre lecturas
+
+	  mylcd_clear ();
+
+	  HAL_Delay(2000);
 
 
   }
@@ -434,6 +415,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(LD2_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PC10 PC11 PC12 */
+  GPIO_InitStruct.Pin = GPIO_PIN_10|GPIO_PIN_11|GPIO_PIN_12;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 }
 

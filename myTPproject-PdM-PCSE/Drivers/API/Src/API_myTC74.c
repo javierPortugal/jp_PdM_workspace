@@ -43,5 +43,5 @@ int8_t get_temperature(void) {
             return temperatura;
         }
     }
-    return -1000;
+    return -200;
 }

@@ -1,7 +1,7 @@
 #ifndef INC_API_MYLCD_I2C_H_
 #define INC_API_MYLCD_I2C_H_
 
-
+#include "API_mylcd_port.h"
 #include "stm32f4xx_hal.h"
 
 /*
@@ -24,6 +24,9 @@
  * mylcd_clear para limpiar la pantalla del lcd
  *
  */
+
+void mylcd_put_cursor(uint8_t line);
+
 void mylcd_init (void);
 
 void mylcd_send_command (char command);
