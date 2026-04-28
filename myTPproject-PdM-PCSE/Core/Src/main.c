@@ -24,6 +24,7 @@
 #include <API_mylcd_i2c.h>
 #include <API_myRTC_i2c.h>
 #include "API_myTC74.h"
+#include <myPrinterUART.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -52,9 +53,8 @@ UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
 
-//#define TC74_ADDRESS 0x48 << 1
-//#define REG_TEMP  0x00
 
+#define ONESECONDS   1000
 
 
 
@@ -131,43 +131,6 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-	  #define ESPACIO_SIZE 2
-	  #define TIMEOUT	   100
-	  #define FIVESECONDS  5000
-	  #define HALFSECONDS  500
-	  #define ONESECONDS   1000
-  	  char mensaje_hora[]= "La hora actual es: \n\r";
-  	  char espacio[]= "\n\r";
-  	  char espacio_final[]= "\n\n\r";
-
-  	  get_time();
-  	  sprintf (data_buffer, "Hora: %02d:%02d:%02d", rtc_time.hour, rtc_time.minutes, rtc_time.seconds);
-  	  mylcd_send_command(LINE1);
-  	  mylcd_send_string(data_buffer);
-  	  HAL_Delay(HALFSECONDS);
-  	  HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
-  	  HAL_UART_Transmit(&huart1, (uint8_t *)( mensaje_hora) ,  strlen(mensaje_hora), TIMEOUT);
-  	  HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
-  	  HAL_UART_Transmit(&huart1, (uint8_t *)(data_buffer) ,  strlen(data_buffer), TIMEOUT);
-  	  HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
-
-  	  char mensaje_fecha[]= "La fecha actual es: \n\r";
-
-  	  sprintf (data_buffer, "Fecha: %02d-%02d-20%02d", rtc_time.dayofmonth, rtc_time.month, rtc_time.year);
-  	  mylcd_send_command(LINE2);
-  	  mylcd_send_string(data_buffer);
-
-  	 HAL_Delay(HALFSECONDS);
-  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
-  	 HAL_UART_Transmit(&huart1, (uint8_t *)( mensaje_fecha) ,  strlen(mensaje_fecha), TIMEOUT);
-  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
-  	 HAL_UART_Transmit(&huart1, (uint8_t *)(data_buffer) ,  strlen(data_buffer), TIMEOUT);
-  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio) ,  ESPACIO_SIZE, TIMEOUT);
-  	 HAL_UART_Transmit(&huart1, (uint8_t *)( espacio_final) ,  ESPACIO_SIZE, TIMEOUT);
-
-  	 HAL_Delay(HALFSECONDS);
-
-  	 HAL_Delay(1000);
 
 
   	typedef enum{
@@ -248,6 +211,7 @@ int main(void)
 
 	  	  break;
 	  	  case LECTURA_TIEMPO_FECHA:
+	  		   get_time();
 	  	  	   sprintf (data_buffer, "Fecha: %02d-%02d-20%02d", rtc_time.dayofmonth, rtc_time.month, rtc_time.year);
 	  	  	   mylcd_put_cursor(LINE2);
 	  	  	   mylcd_send_string(data_buffer);
@@ -274,6 +238,25 @@ int main(void)
 	  		   myEstado_t = INICIAL;
 	  	  break;
 	  	  case IMPRESION_TIEMPO_TEMPERATURA:
+	  		   get_time();
+	  		   sprintf (data_buffer, "Hora: %02d:%02d:%02d", rtc_time.hour, rtc_time.minutes, rtc_time.seconds);
+	  		   Printer_PrintDateTime("La hora actual es:", data_buffer);
+	  		   sprintf (data_buffer, "Fecha: %02d-%02d-20%02d", rtc_time.dayofmonth, rtc_time.month, rtc_time.year);
+	  		   // Imprimir fecha y espacio final
+	  		   Printer_PrintDateTime("La fecha actual es:", data_buffer);
+	  		   Printer_PrintString(PRINTER_FINAL_SPACE);
+	  		   HAL_Delay(ONESECONDS);
+
+
+	  		   my_temperatura = get_temperature();
+	  		   if (my_temperatura != -200) {
+
+	  			sprintf (data_buffer, "Temperatura: %d C", my_temperatura);
+		  		Printer_PrintTemperature("La temperatura actual es:", data_buffer);
+		  		Printer_PrintString(PRINTER_FINAL_SPACE);
+
+	  		   }
+	  		   HAL_Delay(ONESECONDS);
 
 	  		   mylcd_put_cursor(LINE4);
 	  		   mylcd_send_string("Imprimiendo  ....  !");
@@ -302,9 +285,7 @@ int main(void)
 
 
 
-	//  HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)
 
-	//  GPIO_PIN_10
   }
   /* USER CODE END 3 */
 }
