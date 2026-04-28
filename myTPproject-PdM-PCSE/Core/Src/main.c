@@ -122,7 +122,8 @@ int main(void)
    int8_t my_temperatura = 0;
 
    //monitore por serial y Tera term
-   printf("Primer inicio de lectura de TC74...\r\n");
+
+   printf("Ingresando en Main despues de Inicializaciones...\r\n");
 
 
 
@@ -169,19 +170,8 @@ int main(void)
   	 HAL_Delay(1000);
 
 
-/*
-  	 mylcd_clear ();
-  	 mylcd_send_command(LINE1);
-  	 mylcd_send_string("Para iniciar la ");
-  	 mylcd_send_command(LINE2);
-  	 mylcd_send_string("secuencia oprime el ");
-  	 mylcd_send_command(LINE3);
-  	 mylcd_send_string("pulsador azul ..... ");
-*/
-
-/*
   	typedef enum{
-  	 INICIAL,
+  	 INICIAL =0,
   	 LECTURA_TIEMPO_HORA,
 	 LECTURA_TIEMPO_FECHA,
   	 LECTURA_TEMPERATURA,
@@ -193,7 +183,7 @@ int main(void)
 
   	myEstado_t = INICIAL;
 
-  	*/
+  	 mylcd_clear ();
 
 
   while (1)
@@ -203,37 +193,118 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  get_time();
-	  sprintf (data_buffer, "Hora: %02d:%02d:%02d", rtc_time.hour, rtc_time.minutes, rtc_time.seconds);
-	  mylcd_put_cursor(LINE1);
-	  mylcd_send_string(data_buffer);
-
-  	  sprintf (data_buffer, "Fecha: %02d-%02d-20%02d", rtc_time.dayofmonth, rtc_time.month, rtc_time.year);
-  	  mylcd_put_cursor(LINE2);
-  	  mylcd_send_string(data_buffer);
-
-	  my_temperatura =get_temperature(); // obtengo temperatura desde la función de la API
-
-	  if (my_temperatura != -200) {
-
-	   sprintf (data_buffer, "Temperatura: %d C", my_temperatura);
-	   mylcd_put_cursor(LINE3);
-	   mylcd_send_string(data_buffer);
-
-	    }
-
-	  mylcd_put_cursor(LINE4);
-	  mylcd_send_string("STM32 todo integrado");
 
 
+	  switch (myEstado_t){
 
-	  HAL_Delay(2000);   // Espera 1 segundo entre lecturas
+	  	  case INICIAL:
+	  		  mylcd_put_cursor(LINE1);
+	  		  mylcd_send_string("Azul -> Hora");
+	  		  mylcd_put_cursor(LINE2);
+	  		  mylcd_send_string("Blanco -> Fecha");
+	  		  mylcd_put_cursor(LINE3);
+	  		  mylcd_send_string("Rojo -> Temperatura");
+	  		  mylcd_put_cursor(LINE4);
+	  		  mylcd_send_string("Negro -> Imprimir");
+	  		  HAL_Delay(ONESECONDS);
 
-	  mylcd_clear ();
+	  	    if (!HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13)) {
+	  	    	printf("Pin 13 Boton AZUL esta pulsado\r\n");
+	  	    	myEstado_t = LECTURA_TIEMPO_HORA;
+	  	        mylcd_clear();
+	  	        break;
+	  	    }
+	  	    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_11)) {
+	  	    	printf("Pin 11 Boton Blanco esta pulsado\r\n");
+	  	  	  	myEstado_t = LECTURA_TIEMPO_FECHA;
+	  	  	  	mylcd_clear();
+	  	  	  	break;
+	  	  	}
+	  	    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_12)) {
+	  	    	printf("Pin 12 Boton ROJO esta pulsado\r\n");
+	  	  	  	myEstado_t = LECTURA_TEMPERATURA;
+	  	  	  	mylcd_clear();
+	  	  	  	break;
+	  	  	}
+	  	    if (HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10)) {
+	  	    	printf("Pin 10 Boton NEGRO esta pulsado\r\n");
+	  	  	  	myEstado_t = IMPRESION_TIEMPO_TEMPERATURA;
+	  	  	  	mylcd_clear();
+	  	  	  	break;
+	  	  	}
 
-	  HAL_Delay(2000);
+		  break;
+	  	  case LECTURA_TIEMPO_HORA:
+
+	  		   while(!HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10)){
+	  			 get_time();
+	  			 sprintf (data_buffer, "Hora: %02d:%02d:%02d", rtc_time.hour, rtc_time.minutes, rtc_time.seconds);
+	  			 mylcd_put_cursor(LINE1);
+	  			 mylcd_send_string(data_buffer);
+
+	  		   }
+	  		   mylcd_clear();
+	  		   myEstado_t = INICIAL;
+
+	  	  break;
+	  	  case LECTURA_TIEMPO_FECHA:
+	  	  	   sprintf (data_buffer, "Fecha: %02d-%02d-20%02d", rtc_time.dayofmonth, rtc_time.month, rtc_time.year);
+	  	  	   mylcd_put_cursor(LINE2);
+	  	  	   mylcd_send_string(data_buffer);
+	  		   while(!HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10)){
+
+	  		   }
+	  		   mylcd_clear();
+	  		   myEstado_t = INICIAL;
+	  	  break;
+	  	  case LECTURA_TEMPERATURA:
+
+	  		   while(!HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_10)){
+		  		   my_temperatura = get_temperature();
+
+		  		   if (my_temperatura != -200) {
+
+		  		   sprintf (data_buffer, "Temperatura: %d C", my_temperatura);
+		  		   mylcd_put_cursor(LINE3);
+		  		   mylcd_send_string(data_buffer);
+		  		   }
+
+	  		   }
+	  		   mylcd_clear();
+	  		   myEstado_t = INICIAL;
+	  	  break;
+	  	  case IMPRESION_TIEMPO_TEMPERATURA:
+
+	  		   mylcd_put_cursor(LINE4);
+	  		   mylcd_send_string("Imprimiendo  ....  !");
+	  		   printf("Estado de IMPRESION Temperatura, Fecha y Hora\r\n");
+
+	  		   HAL_Delay(ONESECONDS);
+	  		   myEstado_t = INICIAL;
+	  		   mylcd_clear();
+
+	  	  break;
+
+	  	  default:
+	  		   printf("Estado default, Estado Erroneo\r\n");
+	  		   mylcd_clear();
+	  		   mylcd_put_cursor(LINE2);
+	  		   mylcd_send_string("Estado Erroneo");
+	  		   mylcd_put_cursor(LINE3);
+	  		   mylcd_send_string("Oprima Reset");
+	  		   HAL_Delay(ONESECONDS);
+	  		   HAL_Delay(ONESECONDS);
+
+	  }
 
 
+
+
+
+
+	//  HAL_GPIO_ReadPin(B1_GPIO_Port, B1_Pin)
+
+	//  GPIO_PIN_10
   }
   /* USER CODE END 3 */
 }
