@@ -167,7 +167,8 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 /*El pulsador negro tiene dos funciones, liberar las estados de hora,fecha y temperatura, asi como imprimir en papel
- * segun donde se encuentre ubicado
+ * segun donde se encuentre ubicado es el comportamiento que tendra, cuando se encuentra en un estado que no es de imprimir
+ * su compartimiento es para salir de ese estado y retornar al inicial
 */
 	  switch (myEstado_t){
 
