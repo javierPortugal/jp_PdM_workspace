@@ -13,7 +13,7 @@ int8_t get_temperature(void) {
     int8_t temperatura = 0;
     uint8_t reg_temperatura = REG_TEMP;
 
-    // Usamos la capa de abstracción (Port)
+    // Usamos la capa de abstracción (Port) para separar las capas
     if (port_I2C_Write_Temperature(TC74_ADDRESS, &reg_temperatura, 1) != PORT_OK) {
         printf("Error: Sensor no encontrado\r\n");
     } else {
@@ -23,5 +23,5 @@ int8_t get_temperature(void) {
             return temperatura;
         }
     }
-    return -200;
+    return -200; //este valor no lo puede dar el sensor como lectura, es solo para detectar fallo
 }

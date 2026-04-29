@@ -10,14 +10,14 @@
 
 #include "stm32f4xx_hal.h"
 
-// Definición del manejador de I2C (Abstracción del puerto)
+// Definición del manejador de I2C
 extern I2C_HandleTypeDef hi2c1;
 #define LCD_I2C_HANDLE  &hi2c1
 
 // Dirección del LCD
 #define MYLCD_ADDRESS   0x4E
 
-// Prototipo de la función de bajo nivel que usará la librería principal
+// Prototipo de la función de bajo nivel para transmit y poder generar la abstraccion de port
 HAL_StatusTypeDef LCD_IO_Transmit(uint8_t *pData, uint16_t Size);
 
 

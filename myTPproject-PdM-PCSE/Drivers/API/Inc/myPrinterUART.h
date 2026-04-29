@@ -11,6 +11,7 @@
 #include "myPrinterUARTport.h"
 
 // Comandos comunes para impresoras térmicas
+// estos se crearon de acuerdo al comportamiento de la impresora
 #define PRINTER_LINE_SPACE "\n\r"
 #define PRINTER_FINAL_SPACE "\n\n\r"
 

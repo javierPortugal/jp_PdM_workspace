@@ -68,7 +68,7 @@ static void MX_I2C1_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
-// Redirigir printf a UART2
+// Redirigir printf a UART2 para monitoreo serial con Tera Term
 int __io_putchar(int ch) {
   HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
   return ch;
@@ -166,8 +166,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-
-
+/*El pulsador negro tiene dos funciones, liberar las estados de hora,fecha y temperatura, asi como imprimir en papel
+ * segun donde se encuentre ubicado
+*/
 	  switch (myEstado_t){
 
 	  	  case INICIAL:
@@ -252,7 +253,7 @@ int main(void)
 	  		   sprintf (data_buffer, "Hora: %02d:%02d:%02d", rtc_time.hour, rtc_time.minutes, rtc_time.seconds);
 	  		   Printer_PrintDateTime("La hora actual es:", data_buffer);
 	  		   sprintf (data_buffer, "Fecha: %02d-%02d-20%02d", rtc_time.dayofmonth, rtc_time.month, rtc_time.year);
-	  		   // Imprimir fecha y espacio final
+
 	  		   Printer_PrintDateTime("La fecha actual es:", data_buffer);
 	  		   Printer_PrintString(PRINTER_FINAL_SPACE);
 	  		   HAL_Delay(ONESECONDS);
@@ -298,6 +299,7 @@ int main(void)
   /* USER CODE END 3 */
 }
 
+//funciones pàra lectura de botones
 
 bool_t readButton_Hora() {
     return !HAL_GPIO_ReadPin(PORTGPIO, BOTON_AZUL_HORA);

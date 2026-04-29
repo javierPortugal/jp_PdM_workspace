@@ -35,7 +35,7 @@ int conversionDec(uint8_t val);
 
 
 //funciones para grabar datos en y leer datos del RTC
-
+//la funcion set solo se utiliza una vez si el modulo cuenta con una bateria que ayuda a resguardar la informacion
 void set_time (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year);
 void get_time (void);
 

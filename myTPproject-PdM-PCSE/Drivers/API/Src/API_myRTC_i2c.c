@@ -28,6 +28,8 @@ int conversionDec(uint8_t val)
 
 
 // funcion para asignar fecha y hora al modulo
+// set time se requiere la primera vez que asignamos una fecha y hora en el modulo y que se estara
+// guardando en el modulo RTC
 
 void set_time (uint8_t sec, uint8_t min, uint8_t hour, uint8_t dow, uint8_t dom, uint8_t month, uint8_t year)
 {

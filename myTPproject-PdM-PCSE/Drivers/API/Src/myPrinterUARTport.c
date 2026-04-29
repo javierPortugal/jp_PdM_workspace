@@ -7,8 +7,8 @@
 
 
 #include "myPrinterUARTport.h"
-
-extern UART_HandleTypeDef huart1; // Asegúrate que sea la UART conectada a la impresora
+// Asegurar que sea la UART conectada a la impresora
+extern UART_HandleTypeDef huart1;
 #define PRINTER_TIMEOUT 1000
 
 printerStatus_t port_UART_Transmit(uint8_t *pData, uint16_t size) {

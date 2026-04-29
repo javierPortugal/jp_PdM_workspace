@@ -11,6 +11,12 @@
 
 void mylcd_send_command  (char command)
 {
+/*parto el comando de 8 bits en 2 de 4 bits
+ * y las siguiente condicion es para que el LCD procese el dato
+ * en=1, rs=0
+ * en=0, rs=0
+ *
+ * */
 	uint16_t size = 4;
 	int32_t timeout =100;
 
@@ -18,16 +24,22 @@ void mylcd_send_command  (char command)
 	uint8_t data_t[4];
 	data_upper = (command&0xf0);
 	data_lower = ((command<<4)&0xf0);
-	data_t[0] = data_upper|0x0C;  //en=1, rs=0
-	data_t[1] = data_upper|0x08;  //en=0, rs=0
-	data_t[2] = data_lower|0x0C;  //en=1, rs=0
-	data_t[3] = data_lower|0x08;  //en=0, rs=0
-	// Ejemplo dentro de mylcd_send_command y mylcd_send_data:
+	data_t[0] = data_upper|0x0C;
+	data_t[1] = data_upper|0x08;
+	data_t[2] = data_lower|0x0C;
+	data_t[3] = data_lower|0x08;
+
 	LCD_IO_Transmit((uint8_t *) data_t, size);
 }
 
 void mylcd_send_data (char data)
 {
+/*
+ * para enviar caracteres, igual lo parto en dos
+ * y LCD necesita que el modo de datos RS =1
+ * y asi el lcd identifica que es un dato a imprimir
+ *
+ * */
 	uint16_t size = 4;
 	uint32_t timeout =100;
 
@@ -39,7 +51,7 @@ void mylcd_send_data (char data)
 	data_t[1] = data_upper|0x09;  //en=0, rs=1
 	data_t[2] = data_lower|0x0D;  //en=1, rs=1
 	data_t[3] = data_lower|0x09;  //en=0, rs=1
-	// Ejemplo dentro de mylcd_send_command y mylcd_send_data:
+
 	LCD_IO_Transmit((uint8_t *) data_t, size);
 }
 
@@ -54,28 +66,39 @@ void mylcd_clear (void)
 
 void mylcd_init (void)
 {
-	// 4 bit initialisation
-	HAL_Delay(FIFTHY_MILISECONDS);  // wait for >40ms
+	// 4 bit LCD initialization
+	// wait for >40ms
+	// wait for >4.1ms
+	// wait for >100us
+	// 4bit mode
+	//Display on/off control --> D = 1, C and B = 0. (Cursor and blink, last two bits)
+	// display initialization
+	// Function set --> DL=0 (4 bit mode), N = 1 (2 line display) F = 0 (5x8 characters)
+	//Display on/off control --> D=0,C=0, B=0  ---> display off
+	// clear display
+	//Entry mode set --> I/D = 1 (increment cursor) & S = 0 (no shift)
+
+	HAL_Delay(FIFTHY_MILISECONDS);
 	mylcd_send_command (0x30);
-	HAL_Delay(FIVE_MILISECONDS);  // wait for >4.1ms
+	HAL_Delay(FIVE_MILISECONDS);
 	mylcd_send_command  (0x30);
-	HAL_Delay(ONE_MILISECONDS);  // wait for >100us
+	HAL_Delay(ONE_MILISECONDS);
 	mylcd_send_command  (0x30);
 	HAL_Delay(TEN_MILISECONDS);
-	mylcd_send_command  (0x20);  // 4bit mode
+	mylcd_send_command  (0x20);
 	HAL_Delay(TEN_MILISECONDS);
 
-  // display initialisation
-	mylcd_send_command  (0x28); // Function set --> DL=0 (4 bit mode), N = 1 (2 line display) F = 0 (5x8 characters)
+
+	mylcd_send_command  (0x28);
 	HAL_Delay(ONE_MILISECONDS);
-	mylcd_send_command  (0x08); //Display on/off control --> D=0,C=0, B=0  ---> display off
+	mylcd_send_command  (0x08);
 	HAL_Delay(ONE_MILISECONDS);
-	mylcd_send_command  (0x01);  // clear display
+	mylcd_send_command  (0x01);
 	HAL_Delay(ONE_MILISECONDS);
 	HAL_Delay(ONE_MILISECONDS);
-	mylcd_send_command (0x06); //Entry mode set --> I/D = 1 (increment cursor) & S = 0 (no shift)
+	mylcd_send_command (0x06);
 	HAL_Delay(ONE_MILISECONDS);
-	mylcd_send_command  (0x0C); //Display on/off control --> D = 1, C and B = 0. (Cursor and blink, last two bits)
+	mylcd_send_command  (0x0C);
 }
 
 void mylcd_send_string (char *str)
