@@ -25,7 +25,7 @@
 #include <API_myRTC_i2c.h>
 #include "API_myTC74.h"
 #include <myPrinterUART.h>
-
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -73,6 +73,11 @@ int __io_putchar(int ch) {
   HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
   return ch;
 }
+typedef bool bool_t;
+bool_t readButton_Hora();
+bool_t readButton_Fecha();
+bool_t readButton_Temperatura();
+bool_t readButton_Printer();
 
 /* USER CODE END PFP */
 
@@ -176,25 +181,25 @@ int main(void)
 	  		  mylcd_send_string("Negro -> Imprimir");
 	  		  HAL_Delay(ONESECONDS);
 
-	  	    if (!HAL_GPIO_ReadPin(PORTGPIO, BOTON_AZUL_HORA)) {
+	  	    if (readButton_Hora()) {
 	  	    	printf("Pin 13 Boton AZUL esta pulsado\r\n");
 	  	    	myEstado_t = LECTURA_TIEMPO_HORA;
 	  	        mylcd_clear();
 	  	        break;
 	  	    }
-	  	    if (HAL_GPIO_ReadPin(PORTGPIO, BOTON_BLANCO_FECHA)) {
+	  	    if (readButton_Fecha()) {
 	  	    	printf("Pin 11 Boton Blanco esta pulsado\r\n");
 	  	  	  	myEstado_t = LECTURA_TIEMPO_FECHA;
 	  	  	  	mylcd_clear();
 	  	  	  	break;
 	  	  	}
-	  	    if (HAL_GPIO_ReadPin(PORTGPIO, BOTON_ROJO_TEMP)) {
+	  	    if (readButton_Temperatura()) {
 	  	    	printf("Pin 12 Boton ROJO esta pulsado\r\n");
 	  	  	  	myEstado_t = LECTURA_TEMPERATURA;
 	  	  	  	mylcd_clear();
 	  	  	  	break;
 	  	  	}
-	  	    if (HAL_GPIO_ReadPin(PORTGPIO, BOTON_NEGRO_PRINTER)) {
+	  	    if (readButton_Printer()) {
 	  	    	printf("Pin 10 Boton NEGRO esta pulsado\r\n");
 	  	  	  	myEstado_t = IMPRESION_TIEMPO_TEMPERATURA;
 	  	  	  	mylcd_clear();
@@ -204,7 +209,7 @@ int main(void)
 		  break;
 	  	  case LECTURA_TIEMPO_HORA:
 
-	  		   while(!HAL_GPIO_ReadPin(PORTGPIO, BOTON_AZUL_HORA)){
+	  		   while(!readButton_Printer()){
 	  			 get_time();
 	  			 sprintf (data_buffer, "Hora: %02d:%02d:%02d", rtc_time.hour, rtc_time.minutes, rtc_time.seconds);
 	  			 mylcd_put_cursor(LINE1);
@@ -220,7 +225,7 @@ int main(void)
 	  	  	   sprintf (data_buffer, "Fecha: %02d-%02d-20%02d", rtc_time.dayofmonth, rtc_time.month, rtc_time.year);
 	  	  	   mylcd_put_cursor(LINE2);
 	  	  	   mylcd_send_string(data_buffer);
-	  		   while(!HAL_GPIO_ReadPin(PORTGPIO, BOTON_BLANCO_FECHA)){
+	  		   while(!readButton_Printer()){
 
 	  		   }
 	  		   mylcd_clear();
@@ -228,7 +233,7 @@ int main(void)
 	  	  break;
 	  	  case LECTURA_TEMPERATURA:
 
-	  		   while(!HAL_GPIO_ReadPin(PORTGPIO, BOTON_ROJO_TEMP)){
+	  		   while(!readButton_Printer()){
 		  		   my_temperatura = get_temperature();
 
 		  		   if (my_temperatura != -200) {
@@ -291,6 +296,23 @@ int main(void)
 
   }
   /* USER CODE END 3 */
+}
+
+
+bool_t readButton_Hora() {
+    return !HAL_GPIO_ReadPin(PORTGPIO, BOTON_AZUL_HORA);
+}
+
+bool_t readButton_Fecha() {
+    return HAL_GPIO_ReadPin(PORTGPIO, BOTON_BLANCO_FECHA);
+}
+
+bool_t readButton_Temperatura(){
+	return HAL_GPIO_ReadPin(PORTGPIO, BOTON_ROJO_TEMP);
+}
+
+bool_t readButton_Printer(){
+	return HAL_GPIO_ReadPin(PORTGPIO, BOTON_NEGRO_PRINTER);
 }
 
 /**
