@@ -56,7 +56,7 @@ UART_HandleTypeDef huart2;
 
 #define ONESECONDS   1000
 
-
+static int8_t my_temperatura = 0;
 
 /* USER CODE END PV */
 
@@ -124,7 +124,7 @@ int main(void)
    //set_time(00, 52, 8, 3, 22,4, 26);
    mylcd_init();
 
-   int8_t my_temperatura = 0;
+  // int8_t my_temperatura = 0;
 
 
    //monitore por serial y Tera term
